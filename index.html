@@ -1,0 +1,1279 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>无人机驾驶员理论题库刷题</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f4;
+      --text: #202124;
+      --muted: #626a73;
+      --line: #dfe4ea;
+      --teal: #0f766e;
+      --teal-dark: #115e59;
+      --blue: #2563eb;
+      --amber: #b45309;
+      --red: #be123c;
+      --green-soft: #dcfce7;
+      --red-soft: #ffe4e6;
+      --amber-soft: #fef3c7;
+      --shadow: 0 12px 30px rgba(17, 24, 39, 0.08);
+      --header-height: 72px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 0 12px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      white-space: nowrap;
+    }
+
+    button:hover { border-color: #a8b3bf; }
+    button:active { transform: translateY(1px); }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: var(--header-height);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+    }
+
+    .header-inner {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(360px, 560px);
+      gap: 16px;
+      align-items: center;
+      height: 100%;
+      padding: 8px 20px;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      line-height: 1.25;
+      font-weight: 750;
+      letter-spacing: 0;
+    }
+
+    .source-line {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stat {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 6px 10px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.1;
+      overflow-wrap: anywhere;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .main {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+      height: calc(100vh - var(--header-height));
+      display: grid;
+      grid-template-columns: 306px minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+      overflow: hidden;
+      padding: 10px 20px 12px;
+    }
+
+    .sidebar {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 12px;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .panel,
+    .quiz {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 12px;
+    }
+
+    .sidebar .panel:last-child {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .panel-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: 14px;
+    }
+
+    .chip.active {
+      border-color: var(--teal);
+      background: #e6f4f1;
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .controls {
+      display: grid;
+      gap: 8px;
+    }
+
+    label.control {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 0 10px;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.13);
+    }
+
+    .tool-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tool-row button {
+      min-width: 0;
+      padding: 0 8px;
+      font-size: 13px;
+    }
+
+    .danger {
+      border-color: #fecdd3;
+      color: var(--red);
+    }
+
+    .danger:hover {
+      border-color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      min-height: 0;
+      max-height: none;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .nav-btn {
+      height: 34px;
+      min-height: 34px;
+      padding: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .nav-btn.current {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+      font-weight: 750;
+    }
+
+    .nav-btn.correct:not(.current) {
+      border-color: #86efac;
+      background: var(--green-soft);
+      color: #166534;
+    }
+
+    .nav-btn.wrong:not(.current) {
+      border-color: #fda4af;
+      background: var(--red-soft);
+      color: #9f1239;
+    }
+
+    .nav-btn.favorite:not(.current)::after {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      margin-left: 3px;
+      border-radius: 50%;
+      background: var(--amber);
+      vertical-align: middle;
+    }
+
+    .nav-btn.answered:not(.current) {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .empty-list {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .quiz {
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      padding: 18px 24px;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .quiz-top,
+    .quiz-actions,
+    .nav-actions,
+    .answer-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .quiz-top {
+      justify-content: space-between;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .badge {
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      padding: 0 9px;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .badge.type { color: var(--teal-dark); background: #e6f4f1; border-color: #b7ded8; }
+    .badge.wrong { color: #9f1239; background: var(--red-soft); border-color: #fecdd3; }
+    .badge.done { color: #166534; background: var(--green-soft); border-color: #bbf7d0; }
+
+    .favorite-button.active {
+      border-color: #fcd34d;
+      background: var(--amber-soft);
+      color: #92400e;
+      font-weight: 700;
+    }
+
+    .question {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.48;
+      font-weight: 720;
+      overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+
+    .option-list {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .option {
+      width: 100%;
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      align-items: stretch;
+      padding: 0;
+      text-align: left;
+      overflow: hidden;
+      background: #fbfcfd;
+    }
+
+    .option-key {
+      display: grid;
+      place-items: center;
+      border-right: 1px solid var(--line);
+      background: #f3f6f8;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .option-text {
+      min-width: 0;
+      padding: 10px 13px;
+      line-height: 1.42;
+      overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+
+    .option.selected {
+      border-color: var(--blue);
+      background: #eff6ff;
+    }
+
+    .option.selected .option-key {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .option.correct {
+      border-color: #22c55e;
+      background: var(--green-soft);
+    }
+
+    .option.correct .option-key {
+      background: #bbf7d0;
+      color: #166534;
+    }
+
+    .option.wrong {
+      border-color: #fb7185;
+      background: var(--red-soft);
+    }
+
+    .option.wrong .option-key {
+      background: #fecdd3;
+      color: #9f1239;
+    }
+
+    .result {
+      display: none;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      line-height: 1.42;
+      overflow-wrap: anywhere;
+    }
+
+    .result.show { display: block; }
+    .result.good { border-color: #86efac; background: var(--green-soft); color: #166534; }
+    .result.bad { border-color: #fda4af; background: var(--red-soft); color: #9f1239; }
+    .result.neutral { border-color: #fcd34d; background: var(--amber-soft); color: #92400e; }
+
+    .quiz-actions {
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+      font-weight: 750;
+      min-width: 96px;
+    }
+
+    .primary:hover {
+      border-color: var(--teal-dark);
+      background: var(--teal-dark);
+    }
+
+    .progress-strip {
+      height: 7px;
+      border-radius: 999px;
+      background: #e8edf2;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), #22c55e);
+      transition: width 0.2s ease;
+    }
+
+    @media (max-width: 920px) {
+      body {
+        height: auto;
+        min-height: 100vh;
+        overflow: auto;
+      }
+
+      .app-header {
+        height: auto;
+      }
+
+      .header-inner {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .main {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+      }
+
+      .sidebar {
+        overflow: visible;
+      }
+
+      .nav-grid {
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        max-height: 154px;
+      }
+
+      .quiz {
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+      }
+
+      .option-list {
+        overflow: visible;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .header-inner,
+      .main {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tool-row {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .quiz {
+        padding: 16px;
+      }
+
+      .question {
+        font-size: 19px;
+      }
+
+      .quiz-actions {
+        align-items: stretch;
+      }
+
+      .nav-actions,
+      .answer-actions {
+        width: 100%;
+      }
+
+      .nav-actions button,
+      .answer-actions button {
+        flex: 1 1 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div>
+        <h1>无人机驾驶员理论题库</h1>
+        <p class="source-line">2026 省部属工会复习题纲 · 500 题 · 生成时间：2026-06-20 11:01</p>
+      </div>
+      <div class="stats" aria-label="练习统计">
+        <div class="stat"><strong id="statTotal">500</strong><span id="statTotalLabel">题目</span></div>
+        <div class="stat"><strong id="statDone">0</strong><span id="statDoneLabel">已练</span></div>
+        <div class="stat"><strong id="statAccuracy">0%</strong><span id="statAccuracyLabel">正确率</span></div>
+        <div class="stat"><strong id="statWrong">0</strong><span id="statWrongLabel">错题</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <aside class="sidebar">
+      <section class="panel">
+        <div class="panel-title">
+          <h2>练习范围</h2>
+          <span id="scopeCount">500 题</span>
+        </div>
+        <div class="mode-switch" id="modeSwitch">
+          <button class="chip active" data-mode="practice">练习模式</button>
+          <button class="chip" data-mode="test">测试模式</button>
+        </div>
+        <div class="filters" id="filterTabs">
+          <button class="chip active" data-filter="all">全部</button>
+          <button class="chip" data-filter="single">单选</button>
+          <button class="chip" data-filter="multiple">多选</button>
+          <button class="chip" data-filter="judge">判断</button>
+          <button class="chip" data-filter="wrong">错题</button>
+          <button class="chip" data-filter="favorite">收藏</button>
+        </div>
+        <div class="controls">
+          <label class="control">
+            <span>排序</span>
+            <select id="orderSelect">
+              <option value="sequential">顺序</option>
+              <option value="random">随机</option>
+              <option value="unanswered">未练优先</option>
+            </select>
+          </label>
+          <label class="control">
+            <span>搜索</span>
+            <input id="searchInput" type="search" placeholder="题干或选项关键词">
+          </label>
+        </div>
+        <div class="tool-row">
+          <button id="shuffleBtn">重新打乱</button>
+          <button id="exportWrongBtn">导出错题</button>
+          <button id="resetBtn" class="danger">清空记录</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <h2>题目列表</h2>
+          <span id="listCount">0/0</span>
+        </div>
+        <div class="nav-grid" id="navGrid"></div>
+      </section>
+    </aside>
+
+    <section class="quiz" aria-live="polite">
+      <div class="quiz-top">
+        <div class="badges" id="badges"></div>
+        <button id="favoriteBtn" class="favorite-button">收藏</button>
+      </div>
+      <p class="question" id="questionText"></p>
+      <div class="option-list" id="optionList"></div>
+      <div class="result" id="resultBox"></div>
+      <div class="progress-strip" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="quiz-actions">
+        <div class="nav-actions">
+          <button id="prevBtn">上一题</button>
+          <button id="nextBtn">下一题</button>
+        </div>
+        <div class="answer-actions">
+          <button id="revealBtn">看答案</button>
+          <button id="submitBtn" class="primary">提交</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="application/json" id="question-data">[{"id":1,"type":"单选题","number":1,"question":"发动机和螺旋桨在无人驾驶航空器中部或尾部安装的，螺旋桨在旋转过程中产生的为向后\n的（ ）。","options":[{"key":"A","text":"推力"},{"key":"B","text":"拉力"},{"key":"C","text":"作用力"},{"key":"D","text":"阻力"}],"answer":"B"},{"id":2,"type":"单选题","number":2,"question":"三叶和四叶螺旋桨结构复杂，制作的难度较大，主要用于（ ）飞机上。","options":[{"key":"A","text":"中型"},{"key":"B","text":"大型"},{"key":"C","text":"小型"},{"key":"D","text":"微型"}],"answer":"B"},{"id":3,"type":"单选题","number":3,"question":"螺旋桨在空中绕其轴线旋转，桨叶将空气推向后方，空气必然给桨叶以（ ）。","options":[{"key":"A","text":"反作用力"},{"key":"B","text":"重力"},{"key":"C","text":"作用力"},{"key":"D","text":"阻力"}],"answer":"A"},{"id":4,"type":"单选题","number":4,"question":"螺旋桨桨叶剖面具有与机翼剖面类似的翼型，其（ ）为螺旋桨旋转的周速度与向前\n飞行速度的合速度。","options":[{"key":"A","text":"静止速度"},{"key":"B","text":"相对静止"},{"key":"C","text":"相对速度"},{"key":"D","text":"运动速度"}],"answer":"C"},{"id":5,"type":"单选题","number":5,"question":"螺旋桨的（ ）是影响螺旋桨性能重要参数之一。","options":[{"key":"A","text":"宽度"},{"key":"B","text":"厚度"},{"key":"C","text":"直径"},{"key":"D","text":"材料"}],"answer":"C"},{"id":6,"type":"单选题","number":6,"question":"一般情况下，直径增大拉力随之增大，效率随之（ ）。","options":[{"key":"A","text":"提高"},{"key":"B","text":"减小"},{"key":"C","text":"不变"},{"key":"D","text":"都有可能"}],"answer":"A"},{"id":7,"type":"单选题","number":7,"question":"关于升阻比下列说法正确的是（ ）。","options":[{"key":"A","text":"在最大升力系数时阻力一定最小"},{"key":"B","text":"最大升阻比时，一定是达到临界迎角"},{"key":"C","text":"升阻比随迎角的改变而改变"},{"key":"D","text":"在最大阻力系数时升力一定最小"}],"answer":"C"},{"id":8,"type":"单选题","number":8,"question":"增大翼型最大升力系数的两个因素是（ ）。","options":[{"key":"A","text":"厚度和机翼面积"},{"key":"B","text":"弯度和翼展"},{"key":"C","text":"厚度和弯度"},{"key":"D","text":"弯度和机翼面积"}],"answer":"C"},{"id":9,"type":"单选题","number":9,"question":"飞机爬升角的大小取决于（ ）。","options":[{"key":"A","text":"剩余推力"},{"key":"B","text":"飞机重量"},{"key":"C","text":"剩余推力和飞机重量"},{"key":"D","text":"飞机速度"}],"answer":"C"},{"id":10,"type":"单选题","number":10,"question":"偏转副翼使飞机转弯时，两翼的阻力表现为（ ）。","options":[{"key":"A","text":"内侧机翼阻力大"},{"key":"B","text":"外侧机翼阻力大"},{"key":"C","text":"相等"},{"key":"D","text":"都有可能"}],"answer":"B"},{"id":11,"type":"单选题","number":11,"question":"（ ）是无人驾驶航空器在地面站的主要功能。","options":[{"key":"A","text":"数据采集处理"},{"key":"B","text":"飞行控制"},{"key":"C","text":"导航"},{"key":"D","text":"监控与任务规划"}],"answer":"D"},{"id":12,"type":"单选题","number":12,"question":"在飞行中当发动机停车时，地面站会（ ）(飞机安装有转速传感器)。","options":[{"key":"A","text":"报警"},{"key":"B","text":"失控"},{"key":"C","text":"没有影响"},{"key":"D","text":"断开连接"}],"answer":"A"},{"id":13,"type":"单选题","number":13,"question":"（ ）的主要功能是监控无人驾驶航空器的飞行过程以及任务执行情况，它是一个\n实时采集并分析遥测数据、不定时发送控制的指令、显示飞行状态等功能结合于一体的综合\n监控系统。","options":[{"key":"A","text":"地面控制站"},{"key":"B","text":"飞控系统"},{"key":"C","text":"动力系统"},{"key":"D","text":"电力系统"}],"answer":"A"},{"id":14,"type":"单选题","number":14,"question":"地面站监控系统作是整个无人驾驶航空器系统的（ ）。","options":[{"key":"A","text":"指挥中心"},{"key":"B","text":"回收平台"},{"key":"C","text":"能源供给给平台"},{"key":"D","text":"发射平台"}],"answer":"A"},{"id":15,"type":"单选题","number":15,"question":"地面站是无人驾驶航空器系统的（ ）。","options":[{"key":"A","text":"心脏"},{"key":"B","text":"主体"},{"key":"C","text":"心脏和灵魂"},{"key":"D","text":"核心和灵魂"}],"answer":"D"},{"id":16,"type":"单选题","number":16,"question":"类似与数值电台，常见于消费级多旋翼无人驾驶航空器中，地面电台转发出 Wifi 信号，\n传于平板及手机等小型地面站系统连接的是（ ）。","options":[{"key":"A","text":"北斗通讯模块"},{"key":"B","text":"无线图传"},{"key":"C","text":"远程控制"},{"key":"D","text":"Wifi 通讯模块"}],"answer":"D"},{"id":17,"type":"单选题","number":17,"question":"设置准确的航点信息是实现无人驾驶航空器任务规划的前提条件，因此在地图导航的基\n础之上，地面控制站还应有（ ）。","options":[{"key":"A","text":"航点观测功能"},{"key":"B","text":"航点发现功能"},{"key":"C","text":"航点监控功能"},{"key":"D","text":"航点编辑功能"}],"answer":"D"},{"id":18,"type":"单选题","number":18,"question":"深入了解地面站系统，需对其涉及的关键技术进行了解，地面站软件系统统所涉及的关\n键技术主要包含（ ）。","options":[{"key":"A","text":"串口通信"},{"key":"B","text":"MAVLink 协议"},{"key":"C","text":"串口通信、MAVLink 协议、电子地图"},{"key":"D","text":"电子地图"}],"answer":"C"},{"id":19,"type":"单选题","number":19,"question":"数传电台(radio modem),又可称为“无线数传电台”。“无线数传模块。” 是指借助\nDSP 技术和软件无线电技术实现的高性能（ ）传输电传电台。","options":[{"key":"A","text":"控制指令"},{"key":"B","text":"能源"},{"key":"C","text":"专业数据"},{"key":"D","text":"信号"}],"answer":"C"},{"id":20,"type":"单选题","number":20,"question":"无人驾驶航空器地面控制站有多种形式，按（ ）可分为大型地面站、便携式地面\n站和掌上微型地面站。","options":[{"key":"A","text":"大小"},{"key":"B","text":"不同使用要求"},{"key":"C","text":"精密程度"},{"key":"D","text":"复杂程度"}],"answer":"B"},{"id":21,"type":"单选题","number":21,"question":"巡检作业时，大型无人机巡检系统距线路设备空间距离不小于（ ）m、水平距离不\n小于 30m，距周边障碍物距离不小于 70m。","options":[{"key":"A","text":"30"},{"key":"B","text":"40"},{"key":"C","text":"50"},{"key":"D","text":"60"}],"answer":"C"},{"id":22,"type":"单选题","number":22,"question":"巡检作业时，大型无人机巡检系统距线路设备空间距离不小于 50m、水平距离不小于\n（ ）m，距周边障碍物距离不小于 70m。","options":[{"key":"A","text":"30"},{"key":"B","text":"40"},{"key":"C","text":"50"},{"key":"D","text":"60"}],"answer":"A"},{"id":23,"type":"单选题","number":23,"question":"巡检作业时，大型无人机巡检系统距线路设备空间距离不小于 50m、水平距离不小于 30m，\n距周边障碍物距离不小于（ ）m。","options":[{"key":"A","text":"40"},{"key":"B","text":"50"},{"key":"C","text":"60"},{"key":"D","text":"70"}],"answer":"D"},{"id":24,"type":"单选题","number":24,"question":"巡检作业时，中型无人机巡检系统距线路设备空间距离不小于（ ）m,水平距离不\n小于 25m,距周边障碍物距离不小于 50m。","options":[{"key":"A","text":"30"},{"key":"B","text":"40"},{"key":"C","text":"50"},{"key":"D","text":"60"}],"answer":"A"},{"id":25,"type":"单选题","number":25,"question":"巡检作业时，中型无人机巡检系统距线路设备空间距离不小于 30m,水平距离不小于\n（ ）m,距周边障碍物距离不小于 50m。","options":[{"key":"A","text":"15"},{"key":"B","text":"25"},{"key":"C","text":"35"},{"key":"D","text":"45"}],"answer":"B"},{"id":26,"type":"单选题","number":26,"question":"巡检作业时，中型无人机巡检系统距线路设备空间距离不小于 30m,水平距离不小于 25m,\n距周边障碍物距离不小于（ ）m。","options":[{"key":"A","text":"30"},{"key":"B","text":"40"},{"key":"C","text":"50"},{"key":"D","text":"60"}],"answer":"C"},{"id":27,"type":"单选题","number":27,"question":"（ ）适用于在首次开展无人机巡检的线路、存在缺陷或异常的线路，以及需要开\n展精细化巡检的线路。","options":[{"key":"A","text":"精细巡检"},{"key":"B","text":"通道巡检"},{"key":"C","text":"故障巡检"},{"key":"D","text":"特殊巡检"}],"answer":"A"},{"id":28,"type":"单选题","number":28,"question":"通道巡检中，扫描巡检要求利用三维激光扫描仪对线路设备及通道环境进行扫描检查，\n获取（ ）。","options":[{"key":"A","text":"坐标数据"},{"key":"B","text":"经纬度"},{"key":"C","text":"三维点云数据"},{"key":"D","text":"三维模型"}],"answer":"C"},{"id":29,"type":"单选题","number":29,"question":"多轴飞行器动力系统主要用（ ）。","options":[{"key":"A","text":"无刷电机"},{"key":"B","text":"有刷电机"},{"key":"C","text":"四冲程发动机"},{"key":"D","text":"二冲程发动机"}],"answer":"A"},{"id":30,"type":"单选题","number":30,"question":"多轴飞行器动力系统主要使用（ ）。","options":[{"key":"A","text":"步进电机"},{"key":"B","text":"内转子电机"},{"key":"C","text":"外转子电机"},{"key":"D","text":"内、外转子电机"}],"answer":"C"},{"id":31,"type":"单选题","number":31,"question":"多轴飞行器使用的电调一般为（ ）。","options":[{"key":"A","text":"双向电调"},{"key":"B","text":"有刷电调"},{"key":"C","text":"无刷电调"},{"key":"D","text":"单向电调"}],"answer":"C"},{"id":32,"type":"单选题","number":32,"question":"多轴飞行器使用的动力电池一般为（ ）。","options":[{"key":"A","text":"聚合物锂电池"},{"key":"B","text":"铅酸电池"},{"key":"C","text":"银锌电池"},{"key":"D","text":"镍铬电池"}],"answer":"A"},{"id":33,"type":"单选题","number":33,"question":"部分多轴飞行器螺旋桨根部标有“CCW”字样，其意义为（ ）。","options":[{"key":"A","text":"此螺旋桨由 CCW 公司生产"},{"key":"B","text":"此螺旋桨为顶视顺时针旋转"},{"key":"C","text":"此螺旋桨为顶视逆时针旋转"},{"key":"D","text":"此浆是反浆"}],"answer":"C"},{"id":34,"type":"单选题","number":34,"question":"多轴飞行器每个“轴”上，一般连接（ ）。","options":[{"key":"A","text":"1 个电调，1 个电机"},{"key":"B","text":"2 个电调，1 个电机"},{"key":"C","text":"1 个电调，2 个电机"},{"key":"D","text":"2 个电调，2 个电机"}],"answer":"A"},{"id":35,"type":"单选题","number":35,"question":"多轴飞行器上的电信号传播顺序一般为（ ）。","options":[{"key":"A","text":"飞控——机载遥控接收机——电机——电调"},{"key":"B","text":"机载遥控接收机——飞控——电调——电机"},{"key":"C","text":"飞控——电调——机载遥控接收机——电机"},{"key":"D","text":"机载遥控接收机——电调——飞控——电机"}],"answer":"B"},{"id":36,"type":"单选题","number":36,"question":"电调上最粗的红线和黑线用来连接（ ）。","options":[{"key":"A","text":"动力电池"},{"key":"B","text":"电动机"},{"key":"C","text":"机载遥控接收机"},{"key":"D","text":"电机"}],"answer":"A"},{"id":37,"type":"单选题","number":37,"question":"无刷电机与有刷电机的区别有（ ）。","options":[{"key":"A","text":"无刷电机效率较高"},{"key":"B","text":"有刷电机效率较高"},{"key":"C","text":"两类电机效率差不多"},{"key":"D","text":"无刷电机效率较低"}],"answer":"A"},{"id":38,"type":"单选题","number":38,"question":"某多轴电机标有 2208 字样，意思是指（ ）。","options":[{"key":"A","text":"该电机最大承受 22V 电压，最小承受 8V 电压"},{"key":"B","text":"该电机转子高度为 22 毫米"},{"key":"C","text":"该电机转子直径为 22 毫米"},{"key":"D","text":"该电机转子半径为 22 毫米"}],"answer":"C"},{"id":39,"type":"单选题","number":39,"question":"某多轴电机标有 1000KV 字样，意义是指（ ）。","options":[{"key":"A","text":"对应每 V 电压，电机提供 1000000 转转速"},{"key":"B","text":"对应每 V 电压，电机提供 1000 转转速"},{"key":"C","text":"C 电机最大耐压 1000KV"},{"key":"D","text":"对应每 KV 电压，电机提供 1000 转转速"}],"answer":"B"},{"id":40,"type":"单选题","number":40,"question":"某多轴电机转速为 3000 转，是指（ ）。","options":[{"key":"A","text":"每分钟 3000 转"},{"key":"B","text":"每半分钟 3000 转"},{"key":"C","text":"每秒钟 3000 转"},{"key":"D","text":"每小时 3000 转"}],"answer":"A"},{"id":41,"type":"单选题","number":41,"question":"小型多轴无人机动力装置多为（ ）。","options":[{"key":"A","text":"交流伺服电机"},{"key":"B","text":"无刷直流电机"},{"key":"C","text":"普通直流电机"},{"key":"D","text":"直流电机"}],"answer":"B"},{"id":42,"type":"单选题","number":42,"question":"八轴多旋翼某个电机发生故障时，对应做出类似停止工作的电机应是（ ）电机。","options":[{"key":"A","text":"对角"},{"key":"B","text":"左侧"},{"key":"C","text":"右侧"},{"key":"D","text":"临近"}],"answer":"A"},{"id":43,"type":"单选题","number":43,"question":"在航空摄影中，下列哪种方式可以使多旋翼飞行器负载画质更好重量更大的摄影设备\n（ ）。","options":[{"key":"A","text":"电机功率不变，桨叶半径变大且桨叶总距变小"},{"key":"B","text":"桨叶半径不变，电机功率变大且桨叶总距变小"},{"key":"C","text":"桨叶总距不变，电机功率变大且桨叶半径变大"},{"key":"D","text":"桨叶总距不变，电机功率变小且桨叶半径变大"}],"answer":"C"},{"id":44,"type":"单选题","number":44,"question":"电动多轴飞行器控制电机转速的直连设备为（ ）。","options":[{"key":"A","text":"电源"},{"key":"B","text":"电调"},{"key":"C","text":"飞控"},{"key":"D","text":"电机"}],"answer":"B"},{"id":45,"type":"单选题","number":45,"question":"电动动力系统主要由动力电机、.动力电源和（ ）组成。","options":[{"key":"A","text":"电池"},{"key":"B","text":"调速系统"},{"key":"C","text":"无刷电机"},{"key":"D","text":"遥控器"}],"answer":"B"},{"id":46,"type":"单选题","number":46,"question":"多轴无人机，电调和电机一般通过 3 根单色线连接，如任意调换其中 2 根与电机的连接\n顺序，会出现（ ）。","options":[{"key":"A","text":"该电机停转"},{"key":"B","text":"该电机出现过热并烧毁"},{"key":"C","text":"该电机反向运转"},{"key":"D","text":"该电机正常运转"}],"answer":"C"},{"id":47,"type":"单选题","number":47,"question":"4 轴飞行器飞行运动中有（ ）。","options":[{"key":"A","text":"6 个自由度，3 个运动轴"},{"key":"B","text":"4 个自由度，4 个运动轴"},{"key":"C","text":"4 个自由度，3 个运动轴"},{"key":"D","text":"3 个自由度，3 个运动轴"}],"answer":"A"},{"id":48,"type":"单选题","number":48,"question":"被称为“同温层”的是（ ）。","options":[{"key":"A","text":"对流层"},{"key":"B","text":"平流层"},{"key":"C","text":"电高层"},{"key":"D","text":"中间层"}],"answer":"B"},{"id":49,"type":"单选题","number":49,"question":"（ ）是不随地区、气候的不同而起变化的。","options":[{"key":"A","text":"质量"},{"key":"B","text":"体积"},{"key":"C","text":"重量"},{"key":"D","text":"气压"}],"answer":"A"},{"id":50,"type":"单选题","number":50,"question":"运用无人机查看输电线路本体上线夹、均压环、屏蔽环是否存在发热现象，需要使用的\n巡检任务设备为（ ）。","options":[{"key":"A","text":"可见光相机"},{"key":"B","text":"红外热像仪"},{"key":"C","text":"紫外热像仪"},{"key":"D","text":"可见光摄像机"}],"answer":"B"},{"id":51,"type":"单选题","number":51,"question":"当空气在管道中低速流动时，由伯努利定理可得（ ）。","options":[{"key":"A","text":"流速大的地方，静压大"},{"key":"B","text":"流速大的地方，静压小"},{"key":"C","text":"流速大的地方，总压大"},{"key":"D","text":"总压与流速无关"}],"answer":"B"},{"id":52,"type":"单选题","number":52,"question":"飞机在对流层中匀速飞行时，飞机飞行马赫数（ ）。","options":[{"key":"A","text":"保持不变"},{"key":"B","text":"逐渐增加"},{"key":"C","text":"逐渐减小"},{"key":"D","text":"都有可能"}],"answer":"A"},{"id":53,"type":"单选题","number":53,"question":"流体的伯努利定律适用于（ ）。","options":[{"key":"A","text":"不可压缩的理想流体"},{"key":"B","text":"粘性的理想流体"},{"key":"C","text":"不可压缩的粘性流体"},{"key":"D","text":"可压缩的单质流体"}],"answer":"A"},{"id":54,"type":"单选题","number":54,"question":"当无人驾驶航空器的迎角是临界迎角时（ ）。","options":[{"key":"A","text":"飞行速度最大"},{"key":"B","text":"升力系数为最大"},{"key":"C","text":"阻力最小"},{"key":"D","text":"航程最远"}],"answer":"B"},{"id":55,"type":"单选题","number":55,"question":"放全襟翼下降，飞机能以（ ）。","options":[{"key":"A","text":"较大的下降角，较小的速度下降"},{"key":"B","text":"较小的下降角，较大的速度下降"},{"key":"C","text":"较大的下降角，较大的速度下降"},{"key":"D","text":"较小的下降角，较小的速度下降"}],"answer":"A"},{"id":56,"type":"单选题","number":56,"question":"国际标准大气压值是（ ）。","options":[{"key":"A","text":"100kPa"},{"key":"B","text":"225kPa"},{"key":"C","text":"101kPa"},{"key":"D","text":"201kPa"}],"answer":"C"},{"id":57,"type":"单选题","number":57,"question":"空气的密度与压力（ ）。","options":[{"key":"A","text":"正比"},{"key":"B","text":"反比"},{"key":"C","text":"无关"},{"key":"D","text":"都有可能"}],"answer":"A"},{"id":58,"type":"单选题","number":58,"question":"气体的密度与温度（ ）。","options":[{"key":"A","text":"成正比"},{"key":"B","text":"成反比"},{"key":"C","text":"无关"},{"key":"D","text":"都有可能"}],"answer":"B"},{"id":59,"type":"单选题","number":59,"question":"无人直升机在巡检过程中， 通讯链路保持畅通的范围称（ ）。","options":[{"key":"A","text":"操控范围"},{"key":"B","text":"视距内范围"},{"key":"C","text":"无人直升机数据链范围"},{"key":"D","text":"巡检范围"}],"answer":"C"},{"id":60,"type":"单选题","number":60,"question":"在（ ）状态下发动机处于小油门状态，或怠速甚至关机。","options":[{"key":"A","text":"俯冲"},{"key":"B","text":"滑翔"},{"key":"C","text":"爬升"},{"key":"D","text":"盘旋"}],"answer":"B"},{"id":61,"type":"单选题","number":61,"question":"飞机横向阻转力矩主要由（ ）。","options":[{"key":"A","text":"水平尾翼产生"},{"key":"B","text":"垂直尾翼产生"},{"key":"C","text":"机身产生"},{"key":"D","text":"机翼产生"}],"answer":"D"},{"id":62,"type":"单选题","number":62,"question":"飞机机翼的焦点是指（ ）。","options":[{"key":"A","text":"升力的着力点"},{"key":"B","text":"升力和阻力的着力点"},{"key":"C","text":"重力的着力点"},{"key":"D","text":"阻力的着力点"}],"answer":"B"},{"id":63,"type":"单选题","number":63,"question":"有后掠角的飞机有侧滑角时，会产生（ ）。","options":[{"key":"A","text":"滚转力矩"},{"key":"B","text":"俯仰力矩"},{"key":"C","text":"不产生力矩"},{"key":"D","text":"偏航力矩"}],"answer":"A"},{"id":64,"type":"单选题","number":64,"question":"计算动压时需要哪些数据？（ ）。","options":[{"key":"A","text":"大气压力和速度"},{"key":"B","text":"空气密度和阻力"},{"key":"C","text":"空气密度和速度"},{"key":"D","text":"大气压力和阻力"}],"answer":"C"},{"id":65,"type":"单选题","number":65,"question":"飞机横向平衡中的滚转力矩主要包含（ ）。","options":[{"key":"A","text":"机翼阻力力矩"},{"key":"B","text":"机翼升力力矩"},{"key":"C","text":"水平尾翼的力矩"},{"key":"D","text":"垂直尾翼力矩"}],"answer":"B"},{"id":66,"type":"单选题","number":66,"question":"流体在管道中稳定低速流动时，如果管道由粗变细，则流体流速（ ）。","options":[{"key":"A","text":"会增大"},{"key":"B","text":"会减小"},{"key":"C","text":"保持不变"},{"key":"D","text":"都有可能"}],"answer":"A"},{"id":67,"type":"单选题","number":67,"question":"无人机的爬升角是指（ ）。","options":[{"key":"A","text":"飞机立轴与水平线之间的夹角"},{"key":"B","text":"飞机横轴与水平线之间的夹角"},{"key":"C","text":"飞机上升轨迹与水平线之间的夹角"},{"key":"D","text":"飞机纵轴与水平线之间的夹角"}],"answer":"C"},{"id":68,"type":"单选题","number":68,"question":"定期对无人机进行（ ）、清洁、润滑、紧固，确保设备状态正常。","options":[{"key":"A","text":"检查"},{"key":"B","text":"拆卸"},{"key":"C","text":"测量"},{"key":"D","text":"组装"}],"answer":"A"},{"id":69,"type":"单选题","number":69,"question":"定期对无人机进行检查、（ ）、润滑、紧固，确保设备状态正常。","options":[{"key":"A","text":"紧固"},{"key":"B","text":"清洁"},{"key":"C","text":"测量"},{"key":"D","text":"组装"}],"answer":"B"},{"id":70,"type":"单选题","number":70,"question":"定期对无人机进行检查、清洁、（ ）、紧固，确保设备状态正常。","options":[{"key":"A","text":"紧固"},{"key":"B","text":"拆卸"},{"key":"C","text":"润滑"},{"key":"D","text":"组装"}],"answer":"C"},{"id":71,"type":"单选题","number":71,"question":"固定翼无人机应具备失控保护功能，数据链中断超过预设时间时可（ ）。","options":[{"key":"A","text":"自动返航"},{"key":"B","text":"继续作业"},{"key":"C","text":"直接降落"},{"key":"D","text":"手动返航"}],"answer":"A"},{"id":72,"type":"单选题","number":72,"question":"固定翼无人机宜具有信标功能，无人机着陆后能向地面站持续回报（ ）。","options":[{"key":"A","text":"飞行数据"},{"key":"B","text":"定位信息"},{"key":"C","text":"航线信息"},{"key":"D","text":"航迹"}],"answer":"B"},{"id":73,"type":"单选题","number":73,"question":"固定翼无人机自主飞行的航线应在（ ）完成。","options":[{"key":"A","text":"起飞前"},{"key":"B","text":"起飞后"},{"key":"C","text":"出工前"},{"key":"D","text":"启动后"}],"answer":"A"},{"id":74,"type":"单选题","number":74,"question":"清晰显示航向可以直观地看出飞机飞行的（ ）。","options":[{"key":"A","text":"姿态"},{"key":"B","text":"任务点"},{"key":"C","text":"时长"},{"key":"D","text":"方向"}],"answer":"D"},{"id":75,"type":"单选题","number":75,"question":"无人机巡检系统在空中飞行时发生故障或遇紧急意外情况等，应尽可能控制无人机巡检\n系统在（ ）紧急降落。","options":[{"key":"A","text":"起飞区域"},{"key":"B","text":"降落区域"},{"key":"C","text":"安全区域"},{"key":"D","text":"任务区域"}],"answer":"C"},{"id":76,"type":"单选题","number":76,"question":"巡检作业区域出现其他飞行器或飘浮物时，应（ ），在确保安全后方可继续执行\n巡检作业，否则应采取避让措施。","options":[{"key":"A","text":"迅速采取措施保证无人机巡检系统安全"},{"key":"B","text":"立即评估巡检作业安全性"},{"key":"C","text":"立即控制无人机巡检系统降落"},{"key":"D","text":"立即控制无人机巡检系统返航"}],"answer":"B"},{"id":77,"type":"单选题","number":77,"question":"维护保养人员应按要求（ ）按时开展日常维护、零件维修更换、大修保养和试验\n等工作。","options":[{"key":"A","text":"使用经验"},{"key":"B","text":"使用说明书"},{"key":"C","text":"飞行手册"},{"key":"D","text":"维护保养手册"}],"answer":"D"},{"id":78,"type":"单选题","number":78,"question":"以下对于无人直升机解释错误的是（ ）。","options":[{"key":"A","text":"以旋翼为推动方式"},{"key":"B","text":"具有垂直起降和空中悬停特点"},{"key":"C","text":"一般有旋翼带尾桨、共轴反桨和多旋翼等型式"},{"key":"D","text":"比起固定翼无人机，旋翼无人机在起飞和降落的方式选择上有更大的优越性。"}],"answer":"D"},{"id":79,"type":"单选题","number":79,"question":"对于空气密度以下说法正确的是（ ）。","options":[{"key":"A","text":"空气密度正比于压力和绝对温度"},{"key":"B","text":"空气密度正比于压力，反比于绝对溫度"},{"key":"C","text":"空气密度反比于压力，正比于绝对媪度"},{"key":"D","text":"空气密度反比于压力和绝对温度"}],"answer":"B"},{"id":80,"type":"单选题","number":80,"question":"增大飞机机翼的展弦比，目的是减小飞机的（ ）。","options":[{"key":"A","text":"摩擦阻力"},{"key":"B","text":"压差阻力"},{"key":"C","text":"诱导阻力"},{"key":"D","text":"干扰阻力"}],"answer":"C"},{"id":81,"type":"单选题","number":81,"question":"没有保护好飞机表面的光洁度，将增加飞机的哪种阻力（ ）？","options":[{"key":"A","text":"压差阻力"},{"key":"B","text":"摩擦阻力"},{"key":"C","text":"干扰阻力"},{"key":"D","text":"诱导阻力"}],"answer":"B"},{"id":82,"type":"单选题","number":82,"question":"—定体积的容器中，空气压力（ ）。","options":[{"key":"A","text":"与空气密度和空气温度乘积成正比"},{"key":"B","text":"与空气密度和空气温度乘积成反比"},{"key":"C","text":"与空气密度和空气绝对温度乘积成正比"},{"key":"D","text":"与空气密度和空气绝对温度乘积成反比"}],"answer":"C"},{"id":83,"type":"单选题","number":83,"question":"（ ）主要利用计算机来模拟人的视觉功能，从客观事物的图像中提取有价值信息。","options":[{"key":"A","text":"惯性导航"},{"key":"B","text":"卫星导航"},{"key":"C","text":"视觉导航"},{"key":"D","text":"多普勒导航"}],"answer":"C"},{"id":84,"type":"单选题","number":84,"question":"（ ）属于一种推算导航方式，即从已知点的位置根据连续测得的运载体航向角和\n速度推算出其下一点的位置。","options":[{"key":"A","text":"卫星导航"},{"key":"B","text":"视觉导航"},{"key":"C","text":"惯性导航系统"},{"key":"D","text":"地磁导航"}],"answer":"C"},{"id":85,"type":"单选题","number":85,"question":"（ ）的基本原理是通过地磁传感器测得的实时地磁数据与存储在计算机中的地磁\n基准图进行匹配来定位。","options":[{"key":"A","text":"卫星导航"},{"key":"B","text":"视觉导航"},{"key":"C","text":"惯性导航系统"},{"key":"D","text":"地磁导航"}],"answer":"D"},{"id":86,"type":"单选题","number":86,"question":"（ ）利用航姿系统的姿态数据转换到地平坐标系中，在设定初始位置的前提下由\n导航计算机完成推航定位。","options":[{"key":"A","text":"卫星导航"},{"key":"B","text":"多普勒导航"},{"key":"C","text":"惯性导航系统"},{"key":"D","text":"地磁导航"}],"answer":"B"},{"id":87,"type":"单选题","number":87,"question":"（ ）利用对自然天体的测量来确定自身位置和航向。","options":[{"key":"A","text":"卫星导航"},{"key":"B","text":"天文导航"},{"key":"C","text":"惯性导航系统"},{"key":"D","text":"地磁导航"}],"answer":"B"},{"id":88,"type":"单选题","number":88,"question":"空域管理的具体办法由________制定","options":[{"key":"A","text":"民用航空局"},{"key":"B","text":"中央军事委员会"},{"key":"C","text":"国务院和中央军事委员会"}],"answer":"C"},{"id":89,"type":"单选题","number":89,"question":"在一个划定的管制空域内，由________负责该空域内的航空器的空中交通管制","options":[{"key":"A","text":"军航或民航的一个空中交通管制单位"},{"key":"B","text":"军航和民航的各一个空中交通管制单位"},{"key":"C","text":"军航的一个空中交通管制单位"}],"answer":"A"},{"id":90,"type":"单选题","number":90,"question":"空中交通管制单位为飞行中的民用航空器提供的空中交通服务中含有________","options":[{"key":"A","text":"飞行情报服务"},{"key":"B","text":"机场保障服务"},{"key":"C","text":"导航服务"}],"answer":"A"},{"id":91,"type":"单选题","number":91,"question":"民用航空器在管制空域内飞行________","options":[{"key":"A","text":"可以自由飞行"},{"key":"B","text":"可以按 VFR 自由飞行"},{"key":"C","text":"必须取得空中交通管制单位的许可"}],"answer":"C"},{"id":92,"type":"单选题","number":92,"question":"无人机驾驶员在执行飞行任务时，应当随身携带________","options":[{"key":"A","text":"飞行记录本"},{"key":"B","text":"飞机适航证书"},{"key":"C","text":"驾驶员执照或合格证"}],"answer":"C"},{"id":93,"type":"单选题","number":93,"question":"飞行教员合格证申请人必须年满________","options":[{"key":"A","text":"18 周岁"},{"key":"B","text":"20 周岁"},{"key":"C","text":"21 周岁"}],"answer":"A"},{"id":94,"type":"单选题","number":94,"question":"飞行的安全高度是避免航空器与地面障碍物相撞________","options":[{"key":"A","text":"航图网格最低飞行高度"},{"key":"B","text":"最低飞行安全高度"},{"key":"C","text":"最低飞行高度"}],"answer":"C"},{"id":95,"type":"单选题","number":95,"question":"在管制机场附近的所有航空器,以及在地面的航空器都服从____的指令。","options":[{"key":"A","text":"管制员"},{"key":"B","text":"机务人员"},{"key":"C","text":"机长"}],"answer":"A"},{"id":96,"type":"单选题","number":96,"question":"《中国民用航空法》的颁布目的①为了维护国家的领空主权和民用航空权利②保障民用\n航空活动安全和有秩序地进行③保护民用航空活动当事人各方的合法权益④促进民用航空\n事业的发展。________","options":[{"key":"A","text":"③④"},{"key":"B","text":"①②"},{"key":"C","text":"①②③④"}],"answer":"C"},{"id":97,"type":"单选题","number":97,"question":"在飞行任务书中，应当明确________","options":[{"key":"A","text":"飞行任务、起飞时间、航线、高度、允许机长飞行的最低气象条件以及其他有关事项"},{"key":"B","text":"飞行任务、机组成员、起飞时间、航线、高度、允许机长飞行的最低气象条件以及其他有\n关事项"},{"key":"C","text":"飞行任务、起飞时间、航线、允许机长飞行的最低气象条件以及其他相关事项"}],"answer":"A"},{"id":98,"type":"单选题","number":98,"question":"旋翼机可以用________的飞行代替滑行","options":[{"key":"A","text":"1 米至 5 米高度"},{"key":"B","text":"1 米至 10 米高度"},{"key":"C","text":"1 米至 15 米高度"}],"answer":"B"},{"id":99,"type":"单选题","number":99,"question":"飞行申请的内容包括________","options":[{"key":"A","text":"任务性质、航空器型别、装载情况、飞行范围、起止时间、飞行高度和飞行条件"},{"key":"B","text":"任务性质、航空器型别、飞行范围、起止时间、飞行高度和飞行条件"},{"key":"C","text":"任务性质、航空器型别、装载情况、起飞时间、飞行高度和飞行条件"}],"answer":"B"},{"id":100,"type":"单选题","number":100,"question":"在人口稠密区上空进行农林喷洒作业飞行应当符合：①取得作业飞行区域的政府部门的\n书面准②向对作业区域有管辖权的地方飞行标准部门递交完整的作业飞行计划并取得批准\n③通过有效的方式向公众发出作业通知。________","options":[{"key":"A","text":"①②"},{"key":"B","text":"②③"},{"key":"C","text":"①②③"}],"answer":"C"},{"id":101,"type":"单选题","number":101,"question":"关于北京及各地机场周边属于禁飞区认识错误的是________","options":[{"key":"A","text":"北京是政治中心，属于敏感区域"},{"key":"B","text":"机场是民航客机起降区域，不可在周边进行无人机飞行"},{"key":"C","text":"无需在意，随意飞行"}],"answer":"C"},{"id":102,"type":"单选题","number":102,"question":"民航旅客行李中携带锂电池的额定数量超过________严禁携带","options":[{"key":"A","text":"100Wh"},{"key":"B","text":"120Wh"},{"key":"C","text":"160Wh"}],"answer":"C"},{"id":103,"type":"单选题","number":103,"question":"操作无人机飞行应选择在________","options":[{"key":"A","text":"机场飞机"},{"key":"B","text":"政府机关附近"},{"key":"C","text":"空旷区域"}],"answer":"C"},{"id":104,"type":"单选题","number":104,"question":"关于为什么无人机要远离国家边境线，描述最准确的是________","options":[{"key":"A","text":"从电磁安全方面考虑"},{"key":"B","text":"从气象安全方面考虑"},{"key":"C","text":"从避免出现边境纠纷方面考虑"}],"answer":"C"},{"id":105,"type":"单选题","number":105,"question":"无人机系统无线电资源的使用__________局方无线电管理部门的许可证。","options":[{"key":"A","text":"需要"},{"key":"B","text":"不需要"},{"key":"C","text":"一般情况下不需要"}],"answer":"A"},{"id":106,"type":"单选题","number":106,"question":"对于无人机关键性能，无人机驾驶员________。","options":[{"key":"A","text":"不必了解"},{"key":"B","text":"视情况了解"},{"key":"C","text":"必须了解"}],"answer":"C"},{"id":107,"type":"单选题","number":107,"question":"某多轴螺旋桨长 254 毫米，螺距 114 毫米，那么他的型号可表述为________","options":[{"key":"A","text":"2511"},{"key":"B","text":"1045"},{"key":"C","text":"254114"}],"answer":"B"},{"id":108,"type":"单选题","number":108,"question":"某多轴螺旋桨长 381 毫米，螺距 127 毫米，那么他的型号可表述为________","options":[{"key":"A","text":"3812"},{"key":"B","text":"15x5"},{"key":"C","text":"38x12"}],"answer":"B"},{"id":109,"type":"单选题","number":109,"question":"某螺旋桨是正桨，是指________","options":[{"key":"A","text":"从多轴飞行器下方观察，该螺旋桨逆时针旋转"},{"key":"B","text":"从多轴飞行器上方观察，该螺旋桨顺时针旋转"},{"key":"C","text":"从多轴飞行器上方观察，该螺旋桨逆时针旋转"}],"answer":"C"},{"id":110,"type":"单选题","number":110,"question":"八轴飞行器安装有________","options":[{"key":"A","text":"8 个顺时针旋转螺旋桨"},{"key":"B","text":"2 个顺时针旋转螺旋桨，6 个逆时针旋转螺旋桨"},{"key":"C","text":"4 个顺时针旋转螺旋桨，4 个逆时针旋转螺旋桨"}],"answer":"C"},{"id":111,"type":"单选题","number":111,"question":"同样重量不同类型的动力电池，容量最大的是________","options":[{"key":"A","text":"聚合物锂电池"},{"key":"B","text":"镍铬电池"},{"key":"C","text":"镍氢电池"}],"answer":"A"},{"id":112,"type":"单选题","number":112,"question":"同样容量不同类型的电池，最轻的是________","options":[{"key":"A","text":"铅酸蓄电池"},{"key":"B","text":"碱性电池"},{"key":"C","text":"聚合物锂电池"}],"answer":"C"},{"id":113,"type":"单选题","number":113,"question":"多轴飞行器使用的锂聚合物动力电池，其单体标称电压为________","options":[{"key":"A","text":"1.2V"},{"key":"B","text":"11.1V"},{"key":"C","text":"3.7V"}],"answer":"C"},{"id":114,"type":"单选题","number":114,"question":"某多轴动力电池标有 3S2P 字样，代表________","options":[{"key":"A","text":"电池由 3S2P 公司生产"},{"key":"B","text":"电池组先由 2 个单体串联，再将串联后的 3 组并联"},{"key":"C","text":"电池组先由 3 个单体串联，再将串联后的 2 组并联"}],"answer":"C"},{"id":115,"type":"单选题","number":115,"question":"某多轴动力电池容量为 6000mAh，表示________","options":[{"key":"A","text":"理论上，以 6A 电流放电，可放电 1 小时"},{"key":"B","text":"理论上，以 60A 电流放电，可放电 1 小时"},{"key":"C","text":"理论上，以 600A 电流放电，可放电 1 小时"}],"answer":"A"},{"id":116,"type":"单选题","number":116,"question":"以下哪种动力电池在没有充分放电的前提下，不能够以大电流充电________","options":[{"key":"A","text":"铅酸蓄电池"},{"key":"B","text":"镍镉电池"},{"key":"C","text":"锂聚合物电池"}],"answer":"B"},{"id":117,"type":"单选题","number":117,"question":"以下哪种动力电池放电电流最大________","options":[{"key":"A","text":"2000mAh，30C"},{"key":"B","text":"20000mAh，5C"},{"key":"C","text":"8000mAh，20C"}],"answer":"C"},{"id":118,"type":"单选题","number":118,"question":"一般锂聚合物电池上都有 2 组线。1 组是输出线（粗，红黑各 1 根）：1 组是单节锂电\n引出线（细，与 s 数有关），用以监视平衡充电时的单体电压。下面说法正确的是________","options":[{"key":"A","text":"6S 电池有 5 根红色引出线，1 根黑色引出线"},{"key":"B","text":"6S 电池有 7 根引出线"},{"key":"C","text":"6S 电池有 6 根引出线"}],"answer":"B"},{"id":119,"type":"单选题","number":119,"question":"同一架多轴飞行器，在同样做好动力匹配的前提下________","options":[{"key":"A","text":"两叶桨的效率高"},{"key":"B","text":"三叶桨的效率高"},{"key":"C","text":"两种桨效果一样高"}],"answer":"A"},{"id":120,"type":"单选题","number":120,"question":"多轴飞行器不属于以下哪个概念范畴________","options":[{"key":"A","text":"自转旋翼机"},{"key":"B","text":"重于空气的航空器"},{"key":"C","text":"直升机"}],"answer":"A"},{"id":121,"type":"单选题","number":121,"question":"部分多轴飞行器螺旋桨加有外框，其主要作用是________","options":[{"key":"A","text":"提高螺旋桨效率"},{"key":"B","text":"增加外形的美观"},{"key":"C","text":"防止磕碰提高安全性"}],"answer":"C"},{"id":122,"type":"单选题","number":122,"question":"在升高与下降过程中，无人直升机与多轴飞行器表述正确的是________","options":[{"key":"A","text":"无人直升机主要改变旋翼总距，多轴飞行器主要改变旋翼转速"},{"key":"B","text":"无人直升机主要改变旋翼转速，多轴飞行器主要改变旋翼总距"},{"key":"C","text":"无人直升机主要改变旋翼转速，多轴飞行器同样改变旋翼转速"}],"answer":"A"},{"id":123,"type":"单选题","number":123,"question":"多旋翼飞行器为什么一般相对的桨旋转方向是不一样的？________","options":[{"key":"A","text":"效率更高"},{"key":"B","text":"产生更大升力"},{"key":"C","text":"抵消反扭矩"}],"answer":"C"},{"id":124,"type":"单选题","number":124,"question":"多旋翼有几个自甶度？滚转运动是绕哪个轴转？________","options":[{"key":"A","text":"6 个，横轴"},{"key":"B","text":"6 个，纵轴"},{"key":"C","text":"3 个，横轴"}],"answer":"B"},{"id":125,"type":"单选题","number":125,"question":"多旋翼无人机自动驾驶状态下，安全下降速率应该是哪一个？________","options":[{"key":"A","text":"2 米/秒"},{"key":"B","text":"5 米/秒"},{"key":"C","text":"8 米/秒"}],"answer":"A"},{"id":126,"type":"单选题","number":126,"question":"旋翼飞行器从悬停到高速前飞的增速过程中，需用功率是如何变化的？________","options":[{"key":"A","text":"—直增大"},{"key":"B","text":"—直减小"},{"key":"C","text":"先减小后增大"}],"answer":"C"},{"id":127,"type":"单选题","number":127,"question":"多旋翼无人机在使用地面站超视距飞行中，数传下行链路故障中断，该如何处理？\n________","options":[{"key":"A","text":"继续飞行、会自动连接"},{"key":"B","text":"暂停飞行、尝试重新连接、点击原地悬停"},{"key":"C","text":"暂停飞行、尝试重新连接、点击一键返航"}],"answer":"C"},{"id":128,"type":"单选题","number":128,"question":"多旋翼无人机在使用地面站超视距飞行中，数传上行链路故障中断，该如何处理？\n________","options":[{"key":"A","text":"检查上行链路设备恢复通信"},{"key":"B","text":"继续飞行、会自动连接"},{"key":"C","text":"暂停飞行、尝试重新连接、点击一键返航"}],"answer":"A"},{"id":129,"type":"单选题","number":129,"question":"多旋翼遥控状态下动力失效最合适处理方法？________","options":[{"key":"A","text":"利用旋翼旋转安全降落"},{"key":"B","text":"有伞开伞"},{"key":"C","text":"坠落在任意地方"}],"answer":"B"},{"id":130,"type":"单选题","number":130,"question":"使用遥控器遥控飞行时，如果无人机反应时断时续或无反应，不可能的原因是________","options":[{"key":"A","text":"遥控器电力不足"},{"key":"B","text":"磁场干扰"},{"key":"C","text":"动力电池电量不够"}],"answer":"C"},{"id":131,"type":"单选题","number":131,"question":"执行飞行任务前，对无人机的检查准备工作包括哪些？①检查电池电量；②飞行器外观\n检查，各机载设备零部件外观及连接，螺旋桨是否安装正确；③检查遥控器与地面站，遥控\n器各开关位置是否正确，遥杆位置是够正确，地面站电量是否充足，软件是否完备，地面设\n备连接是否可靠。④开机顺序是否正确：控制站—遥控器—无人机⑤遥控器开机，所选模型\n是否正确，飞行模式是否正确。________","options":[{"key":"A","text":"①②③④⑤"},{"key":"B","text":"②③④⑤"},{"key":"C","text":"①②③④"}],"answer":"A"},{"id":132,"type":"单选题","number":132,"question":"民用无人机调整中的基本感度是？________","options":[{"key":"A","text":"飞控 PID 调节中 I 积分系数"},{"key":"B","text":"飞控 PID 调节中的比例 P 的系数"},{"key":"C","text":"飞控 PID 调节中 D 微分系数"}],"answer":"B"},{"id":133,"type":"单选题","number":133,"question":"对于直升机、多旋翼无人机的旋翼或固定翼无人机的螺旋桨，保持角速度一定，更换直\n径较小的螺旋桨。________","options":[{"key":"A","text":"桨尖线速度减小"},{"key":"B","text":"桨尖线速度变大"},{"key":"C","text":"桨尖线速度不变"}],"answer":"A"},{"id":134,"type":"单选题","number":134,"question":"遥控器、图传、地面站与飞行器之间数据链路分别是？________","options":[{"key":"A","text":"上行链路、下行链路、上下行链路并存"},{"key":"B","text":"上行链路、下行链路、上行链路"},{"key":"C","text":"上行链路、下行链路、下行链路"}],"answer":"A"},{"id":135,"type":"单选题","number":135,"question":"遥控器菜单中 SUB TRIM 代表什么意思？________","options":[{"key":"A","text":"中立微调"},{"key":"B","text":"时空保护"},{"key":"C","text":"通道反向"}],"answer":"A"},{"id":136,"type":"单选题","number":136,"question":"众多周知，物体运动的速度是一个矢量，关于飞行过程中空速与地速的关系，下列正确\n的是？________","options":[{"key":"A","text":"无论何时，空速+风速=地速"},{"key":"B","text":"正侧风时，空速=地速"},{"key":"C","text":"逆风时，空速\u003c地速"}],"answer":"A"},{"id":137,"type":"单选题","number":137,"question":"已知某锂电池铭牌标记为 2S 2P 3C，单片锂电池容量为 16000mah，则该电池的最大放\n电电流是多少？________","options":[{"key":"A","text":"16A"},{"key":"B","text":"96A"},{"key":"C","text":"48A"}],"answer":"B"},{"id":138,"type":"单选题","number":138,"question":"多旋翼无人机以下哪个下降速度较为合理？________","options":[{"key":"A","text":"8m/s"},{"key":"B","text":"5m/s"},{"key":"C","text":"2m/s"}],"answer":"C"},{"id":139,"type":"单选题","number":139,"question":"螺旋桨参数为 1045 CCW 其含义是什么？________","options":[{"key":"A","text":"桨叶直径 10in，螺距 45in，顺时针旋转的螺旋桨"},{"key":"B","text":"桨叶直径 10mm，螺距 4.5mm，逆时针旋转的螺旋桨"},{"key":"C","text":"桨叶直径 10in，螺距 4.5in，逆时针旋转的螺旋桨"}],"answer":"C"},{"id":140,"type":"单选题","number":140,"question":"无人机在姿态模式下________","options":[{"key":"A","text":"飞控参与外回路"},{"key":"B","text":"飞控参与内回路"},{"key":"C","text":"内外回路均参与"}],"answer":"B"},{"id":141,"type":"单选题","number":141,"question":"无人机在 GPS 模式下人工管什么？________","options":[{"key":"A","text":"姿态和位置都管"},{"key":"B","text":"位置"},{"key":"C","text":"位置修正量"}],"answer":"C"},{"id":142,"type":"单选题","number":142,"question":"以下无人机中，需要跑道起降的是________","options":[{"key":"A","text":"固定翼无人机"},{"key":"B","text":"多旋翼无人机"},{"key":"C","text":"六轴飞行器解析：无人直升机和多旋翼无人机均不需要跑道起飞。"}],"answer":"A"},{"id":143,"type":"单选题","number":143,"question":"无刷电机如果遇到旋转方向相反，需要换向时应如何处理？________","options":[{"key":"A","text":"电调与飞控的连接线进行对换"},{"key":"B","text":"电调与电源的连接线进行对换"},{"key":"C","text":"电调与电机的连接线 3 根中任意对换 2 根"}],"answer":"C"},{"id":144,"type":"单选题","number":144,"question":"多旋翼无人机的配电、用电系统连线正确的是________","options":[{"key":"A","text":"动力电源——分电设备（并联）——ESC——电机"},{"key":"B","text":"动力电源——分电设备（串联）——ESC——电机"},{"key":"C","text":"A 和 B 都对"}],"answer":"A"},{"id":145,"type":"单选题","number":145,"question":"多旋翼无人机的配电、用电系统连线正确的是________。","options":[{"key":"A","text":"动力电源——ESC（BEC）——飞控、接收机及其他低压设备或低电压电源"},{"key":"B","text":"动力电源——飞控、接收机及其他低压设备或低电压电源——ESC（BEC）"},{"key":"C","text":"A 和 B"}],"answer":"A"},{"id":146,"type":"单选题","number":146,"question":"多轴飞行器飞行平台由哪些设备组成，描述出其连接方式________。","options":[{"key":"A","text":"遥控接收机——飞控——电调——电机；摄像头——图传——图传电源"},{"key":"B","text":"动力电池——电调——电机；数传电源——数传模块——飞控"},{"key":"C","text":"A 和 B"}],"answer":"C"},{"id":147,"type":"单选题","number":147,"question":"多旋翼飞行器上各种天线设备布置要求是________","options":[{"key":"A","text":"GPS 接收天线尽量中心高处无遮挡；遥控接收机天线、数传天线、图传天线尽量互相靠近\n都布\n置于机身下方无遮挡；所有全向天线尽量垂直布置"},{"key":"B","text":"GPS 接收天线尽量中心高处无遮挡；遥控接收机天线、数传天线、图传天线尽量互相远离\n都布\n置于机身下方无遮挡；所有全向天线尽量垂直布置"},{"key":"C","text":"GPS 接收天线尽量中心高处无遮挡；遥控接收机天线、数传天线、图传天线尽量互相远离\n都布\n置于机身下方无遮挡；所有全向天线尽量水平布置"}],"answer":"B"},{"id":148,"type":"单选题","number":148,"question":"电动多旋翼的螺旋桨可以做的尽量大，从而可以用最少的旋翼数实现大载荷，是否正\n确？________","options":[{"key":"A","text":"正确"},{"key":"B","text":"错误"},{"key":"C","text":"不完全正确"}],"answer":"C"},{"id":149,"type":"单选题","number":149,"question":"保持油门持续爬升，电机功率会增加还是减小？________","options":[{"key":"A","text":"增大"},{"key":"B","text":"不变"},{"key":"C","text":"减小"}],"answer":"B"},{"id":150,"type":"单选题","number":150,"question":"自动驾驶仪中的陀螺是用来测量哪些物理量的？________","options":[{"key":"A","text":"角速度"},{"key":"B","text":"加速度"},{"key":"C","text":"方向"}],"answer":"A"},{"id":151,"type":"单选题","number":151,"question":"飞控上的 GPS/COMPSS 模块不能给无人机提供哪些数据？________","options":[{"key":"A","text":"方向"},{"key":"B","text":"位置"},{"key":"C","text":"加速度"}],"answer":"C"},{"id":152,"type":"单选题","number":152,"question":"飞控中的气压高度传感器经过修正参数以后所获得的高度数据是？________","options":[{"key":"A","text":"相对高度"},{"key":"B","text":"绝对高度"},{"key":"C","text":"真实高度"}],"answer":"B"},{"id":153,"type":"单选题","number":153,"question":"每到一个新地方必须校准什么传感器？________","options":[{"key":"A","text":"GPS"},{"key":"B","text":"气压计"},{"key":"C","text":"地磁传感器"}],"answer":"C"},{"id":154,"type":"单选题","number":154,"question":"地面站链路属于什么链路？________","options":[{"key":"A","text":"上行"},{"key":"B","text":"下行"},{"key":"C","text":"上下行"}],"answer":"C"},{"id":155,"type":"单选题","number":155,"question":"地面站中无线电波长越长，绕射能力越？________","options":[{"key":"A","text":"强"},{"key":"B","text":"弱"},{"key":"C","text":"没变化"}],"answer":"A"},{"id":156,"type":"单选题","number":156,"question":"地面站中无线电频率越小，穿透能力越？________","options":[{"key":"A","text":"强"},{"key":"B","text":"弱"},{"key":"C","text":"没变化"}],"answer":"B"},{"id":157,"type":"单选题","number":157,"question":"定向型天线的优点？________","options":[{"key":"A","text":"覆盖范围广"},{"key":"B","text":"辐射距离远"},{"key":"C","text":"绕射能力强"}],"answer":"B"},{"id":158,"type":"单选题","number":158,"question":"下列属于定向天线的是？________","options":[{"key":"A","text":"各长度鞭状天线"},{"key":"B","text":"蘑菇头天线"},{"key":"C","text":"八木"}],"answer":"C"},{"id":159,"type":"单选题","number":159,"question":"各长度鞭状天线架设方式必须和通讯方向？________","options":[{"key":"A","text":"垂直"},{"key":"B","text":"平行"},{"key":"C","text":"相同方向"}],"answer":"A"},{"id":160,"type":"单选题","number":160,"question":"飞行中地面站显示滚转角度为零，目视飞机有明显的坡度，不太可能原因是什么？\n________","options":[{"key":"A","text":"飞控故障"},{"key":"B","text":"上行链路中断"},{"key":"C","text":"传感器故障"}],"answer":"B"},{"id":161,"type":"单选题","number":161,"question":"多轴飞行器飞行平台甶哪些设备组成？________","options":[{"key":"A","text":"飞控、电调、电机、螺旋桨、机架、接收机"},{"key":"B","text":"飞控、电调、电机、螺旋桨、机架、倾斜盘"},{"key":"C","text":"飞控、电调、电机、螺旋桨、机架、遥控器"}],"answer":"A"},{"id":162,"type":"单选题","number":162,"question":"多旋翼飞行器上各种天线设备布置有什么要求？________","options":[{"key":"A","text":"GPS 接收天线安装在机腹"},{"key":"B","text":"数传天线布置于机腹"},{"key":"C","text":"数传天线、图传天线尽量靠近布置"}],"answer":"B"},{"id":163,"type":"单选题","number":163,"question":"多旋翼拥有三轴布局的形式，这种布局形式中间轴多了一个舵机，这个舵机的作用是什\n么？________","options":[{"key":"A","text":"抵消反扭矩"},{"key":"B","text":"收起起落架"},{"key":"C","text":"改变旋翼螺距"}],"answer":"A"},{"id":164,"type":"单选题","number":164,"question":"飞行器检查时，多旋翼电机产生震动，在排除电机本身故障后，检查动力电路。我们应\n检查电调的输入端连接还是输出端连接。________","options":[{"key":"A","text":"输入端"},{"key":"B","text":"输出端"},{"key":"C","text":"不用检查"}],"answer":"B"},{"id":165,"type":"单选题","number":165,"question":"多旋翼飞行器如果重新组装后，不需要校准哪些传感器？________","options":[{"key":"A","text":"GPS"},{"key":"B","text":"磁罗盘"},{"key":"C","text":"气压计"}],"answer":"C"},{"id":166,"type":"单选题","number":166,"question":"无人机在飞行中晃动过大或反应滞后，除了飞控感度的原因，还有可能是什么原因？①\n多旋翼飞行器机臂刚度不够，或有安装旷量②多旋翼机体太大致使转动惯量太大③多旋翼螺\n旋桨太重，加减速慢致使操纵相应慢④固定翼机体或舵面刚度不够，连杆、摇臂或舵机本身\n有旷量。________","options":[{"key":"A","text":"①②③"},{"key":"B","text":"②③④"},{"key":"C","text":"①②③④"}],"answer":"C"},{"id":167,"type":"单选题","number":167,"question":"自动定高飞行时，飞行器持续升高或下降，不可能的原因是什么？________","options":[{"key":"A","text":"角速度计故障"},{"key":"B","text":"动力系统故障"},{"key":"C","text":"高度传感器故障"}],"answer":"A"},{"id":168,"type":"单选题","number":168,"question":"姿态遥控下出现动力失效如何处理? ________","options":[{"key":"A","text":"把油门降到最低位"},{"key":"B","text":"稳住飞机，缓慢降落"},{"key":"C","text":"关掉遥控器"}],"answer":"B"},{"id":169,"type":"单选题","number":169,"question":"以下是无人机相关部件，数传电台，飞控，电子调速器，OSD，5.8G 图传，电机，摄像\n头等，连接方式正确的是：________","options":[{"key":"A","text":"OSD—5.8G 图传—电机"},{"key":"B","text":"电机—电子调速器—飞控—数传电台"},{"key":"C","text":"电机—电子调速器—数传电台—飞控"}],"answer":"B"},{"id":170,"type":"单选题","number":170,"question":"用遥控器设置电调，需要________","options":[{"key":"A","text":"断开电机"},{"key":"B","text":"接上电机"},{"key":"C","text":"断开动力电源"}],"answer":"B"},{"id":171,"type":"单选题","number":171,"question":"关于多轴使用的无刷电机与有刷电机，说法正确的是________","options":[{"key":"A","text":"有刷电机驱动交流电机"},{"key":"B","text":"无刷电机驱动交流电机"},{"key":"C","text":"无刷电机驱动直流电机"}],"answer":"B"},{"id":172,"type":"单选题","number":172,"question":"有 2 个输出功率相同的电机，前者型号 3508，后者型号 2820，以下表述正确的是________","options":[{"key":"A","text":"3508 适合带动更大的螺旋桨"},{"key":"B","text":"2820 适用于更高的转速"},{"key":"C","text":"尺寸上，2820 粗一些，3508 高一些"}],"answer":"C"},{"id":173,"type":"单选题","number":173,"question":"在遇到特殊情况，民用航空器的机长，为保证民用航空器及其人员的安全________","options":[{"key":"A","text":"应当及时向管制单位报告，按照相关规定进行正确处置"},{"key":"B","text":"应当及时向签派或上级领导报告，按照相关规定进行正确处置"},{"key":"C","text":"有权对航空器进行处置"}],"answer":"C"},{"id":174,"type":"单选题","number":174,"question":"中华人民共和国境内的飞行管制________","options":[{"key":"A","text":"由中国人民解放军空军统一组织实施，各有关飞行管制部门按照各自的职责分工提供空中\n交通管制服务"},{"key":"B","text":"由国务院﹑中央军委空中交通管制委员会统一组织实施，各有关飞行管制部门按照各自的\n职责分工提供空中交通管制服务"},{"key":"C","text":"由中国民用航空总局空中交通管理局统一组织实施，各有关飞行管制部门按照各自的职责\n分工提供空中交通管制服务"}],"answer":"A"},{"id":175,"type":"单选题","number":175,"question":"部分商用多轴飞行器有收放脚架功能或机架整体变形功能，其主要目的是________","options":[{"key":"A","text":"改善机载任务设备视野"},{"key":"B","text":"调整重心增加飞行器稳定行"},{"key":"C","text":"减小前飞废阻力"}],"answer":"A"},{"id":176,"type":"单选题","number":176,"question":"在地表的风向稍微不同于地表之上几千英尺高度的风向的原因是________","options":[{"key":"A","text":"当地地形影响气压"},{"key":"B","text":"地面有较强的地转偏向力"},{"key":"C","text":"风和地面之间的磨擦作用"}],"answer":"C"},{"id":177,"type":"单选题","number":177,"question":"飞机机翼的焦点指的是________","options":[{"key":"A","text":"升力的着力点"},{"key":"B","text":"附加升力的着力点"},{"key":"C","text":"重力的着力点"}],"answer":"B"},{"id":178,"type":"单选题","number":178,"question":"没有角度失真的航图叫做________","options":[{"key":"A","text":"等距投影图"},{"key":"B","text":"等角投影图"},{"key":"C","text":"等积投影图"}],"answer":"B"},{"id":179,"type":"单选题","number":179,"question":"无人机地面站系统不包括________","options":[{"key":"A","text":"载荷控制站"},{"key":"B","text":"无人机控制站"},{"key":"C","text":"机载电台"}],"answer":"C"},{"id":180,"type":"单选题","number":180,"question":"无人机年度检查不可由进行________","options":[{"key":"A","text":"飞机制造商"},{"key":"B","text":"认证的检查授权人员"},{"key":"C","text":"无人机飞行员"}],"answer":"C"},{"id":181,"type":"单选题","number":181,"question":"飞机从已建立的平衡状态发生偏离，若________，则飞机表现出负动安定性。","options":[{"key":"A","text":"飞机振荡的振幅减小使飞机回到原来的平衡状态"},{"key":"B","text":"飞机振荡的振幅持续增大"},{"key":"C","text":"飞机振荡的振幅不增大也不减小"}],"answer":"B"},{"id":182,"type":"单选题","number":182,"question":"关于风切变出现的地方，下述说法正确的是: ________","options":[{"key":"A","text":"仅在雷暴中出现"},{"key":"B","text":"在气压和温度急剧下降的地方出现"},{"key":"C","text":"在大气中任何高度上存在风向或风速变化的地方"}],"answer":"C"},{"id":183,"type":"单选题","number":183,"question":"露点温度指空气在水汽含量和气压都不改变的条件下， 冷却到饱和时的温度。形象地\n说，就是空气中的水蒸气变为露珠时候的温度叫露点温度。下述哪个正确？________","options":[{"key":"A","text":"当空气中水汽已达到饱和时，气温与露点温度相同"},{"key":"B","text":"当水汽未达到饱和时，气温一定低于露点温度"},{"key":"C","text":"在 100%的相对湿度时，周围环境的温度高于露点温度"}],"answer":"A"},{"id":184,"type":"单选题","number":184,"question":"描述一个多轴无人机地面遥控发射机是“日本手”，是指________","options":[{"key":"A","text":"右手上下动作控制油门或高度"},{"key":"B","text":"左手上下动作控制油门或高度"},{"key":"C","text":"左手左右动作控制油门或高度"}],"answer":"A"},{"id":185,"type":"单选题","number":185,"question":"飞行驾驶员操纵无人机转弯时，下列错误的过程描述是________","options":[{"key":"A","text":"坡度形成，飞机即进入转弯"},{"key":"B","text":"改平坡度，飞机转弯即停止"},{"key":"C","text":"可以在只操纵方向舵不形成坡度的情况下实现快速高效转弯"}],"answer":"C"},{"id":186,"type":"单选题","number":186,"question":"遥控无人机着陆时，拉飘的修正方法是________","options":[{"key":"A","text":"发现拉飘时，应立即继续拉杆"},{"key":"B","text":"发现拉飘时，应立即柔和推杆制止飞机继续上飘"},{"key":"C","text":"发现拉飘时，稳住并保持杆量"}],"answer":"B"},{"id":187,"type":"单选题","number":187,"question":"我国管制空域包括 A/B/C/D 四类空中交通服务空域。每一个空域都是一划定 范围的三\n维空间， 其中________空域是中、低空管制空域， 为 6000m（含） 以下至最低高度层的\n以上空间 0 分。","options":[{"key":"A","text":"A 类"},{"key":"B","text":"B 类"},{"key":"C","text":"C 类"}],"answer":"B"},{"id":188,"type":"单选题","number":188,"question":"多旋翼无人机要实现在悬停中向右偏航，不同螺旋桨如何变化？________","options":[{"key":"A","text":"逆时针桨减速，顺时针桨加速"},{"key":"B","text":"机体轴左边螺旋桨加速，右边螺旋桨减速"},{"key":"C","text":"逆时针桨加速，顺时针桨减速"}],"answer":"C"},{"id":189,"type":"单选题","number":189,"question":"下列说法正确的是________","options":[{"key":"A","text":"飞行教员不得为获得 CCA61 部要求的执照.合格证.等级.运行许可.实践考试\n或者理论考试权利而为自己进行任何签字。"},{"key":"B","text":"除非具有局方委任的监察员或考试员资格，否则飞行教员不得为获得 CCA61 部要求的执\n照.合格证.等级.运行许可.实践考试或者理论考试权利而为自己进行任何签字。"},{"key":"C","text":"当存在特殊的情况或条件限制时，在获得特别授权和批准后，飞行教员可以 为获得 CCA61\n部要求的执照、合格证、等级、运行许可、实践考试或者理论考试权利而为自己进行签字"}],"answer":"A"},{"id":190,"type":"单选题","number":190,"question":"在实际运用中，通常用气温垂直递减率，单位是？________","options":[{"key":"A","text":"摄氏度/1000 米"},{"key":"B","text":"摄氏度/500 米"},{"key":"C","text":"摄氏度/100 米"}],"answer":"C"},{"id":191,"type":"单选题","number":191,"question":"遥控无人机复飞时，正确的操纵方式是________","options":[{"key":"A","text":"保持油门，快速拉杆转入爬升"},{"key":"B","text":"保持油门，快速拉杆转入爬升"},{"key":"C","text":"柔和地加满油门，保持好方向，同时柔和拉杆使飞机逐渐转入爬升，保持好\n爬升状态"}],"answer":"C"},{"id":192,"type":"单选题","number":192,"question":"我国民航飞行使用的时间________","options":[{"key":"A","text":"北京时"},{"key":"B","text":"当地的地方时"},{"key":"C","text":"世界协调时"}],"answer":"C"},{"id":193,"type":"单选题","number":193,"question":"气体的伯努利定理是哪个定律在空气流动过程中的应用？________","options":[{"key":"A","text":"能量守衡定律"},{"key":"B","text":"牛顿第一定律"},{"key":"C","text":"质量守衡定律"}],"answer":"A"},{"id":194,"type":"单选题","number":194,"question":"下列何种情况说明了飞机从一种气团斡旋进入了另一种气团？________","options":[{"key":"A","text":"飞过山区时碰上了扰动气流"},{"key":"B","text":"穿过了高空急流"},{"key":"C","text":"在短时间内温度和风向都有明显变化"}],"answer":"C"},{"id":195,"type":"单选题","number":195,"question":"无人机的注册所有者或运营人应对保持无人机有最新的适航证书和________负责。","options":[{"key":"A","text":"无人机安全飞行"},{"key":"B","text":"无人机注册证书"},{"key":"C","text":"无人机维修"}],"answer":"B"},{"id":196,"type":"单选题","number":196,"question":"多轴航拍中往往需要使用相机的位移补偿功能，导致使用此功能的原因是________","options":[{"key":"A","text":"飞行器的速度"},{"key":"B","text":"风速"},{"key":"C","text":"飞行器姿态不稳"}],"answer":"A"},{"id":197,"type":"单选题","number":197,"question":"下列情况中，无人机系统驾驶员由局方实施管理________","options":[{"key":"A","text":"在融合空域运行的轻型无人机"},{"key":"B","text":"在融合空域运行的小型无人机"},{"key":"C","text":"在隔离空域内超视距飞行的无人机"}],"answer":"B"},{"id":198,"type":"单选题","number":198,"question":"下面关于雾说法不正确的是？________","options":[{"key":"A","text":"大雾会影响无人机的起降手动操作"},{"key":"B","text":"大雾会影响无人机的航向自主飞行"},{"key":"C","text":"大雾会影响无人机航拍任务设备效果"}],"answer":"B"},{"id":199,"type":"单选题","number":199,"question":"地球表面两点之间大圆航线的特点是________","options":[{"key":"A","text":"各点航线角相等"},{"key":"B","text":"航线距离最短"},{"key":"C","text":"航线距离最长"}],"answer":"B"},{"id":200,"type":"单选题","number":200,"question":"姿态遥控模式下操纵无人机爬升，飞机带右坡度时，下列正确的操纵是________","options":[{"key":"A","text":"应柔和地向前顶杆"},{"key":"B","text":"应柔和地回杆或向左压杆"},{"key":"C","text":"应柔和地向右压杆"}],"answer":"B"},{"id":201,"type":"单选题","number":201,"question":"多旋翼飞行器的飞控指的是________","options":[{"key":"A","text":"机载任务系统"},{"key":"B","text":"机载遥控接收机"},{"key":"C","text":"机载导航飞控系统"}],"answer":"C"},{"id":202,"type":"单选题","number":202,"question":"轴飞行器有“X”模式和“＋”模式两大类，其中________","options":[{"key":"A","text":"“＋”模式操纵性好"},{"key":"B","text":"“X”模式操纵性好"},{"key":"C","text":"两种模式操纵性没有区别"}],"answer":"B"},{"id":203,"type":"单选题","number":203,"question":"多轴飞行器的飞控硬件尽量安装在________","options":[{"key":"A","text":"飞行器的前部"},{"key":"B","text":"飞行器的底部"},{"key":"C","text":"飞行器的中心"},{"key":"D","text":"飞行器的顶部"}],"answer":"C"},{"id":204,"type":"单选题","number":204,"question":"多轴飞行器中的 GPS 天线应尽量安装在________","options":[{"key":"A","text":"飞行器的前部"},{"key":"B","text":"飞行器的底部"},{"key":"C","text":"飞行器的中心"},{"key":"D","text":"飞行器的顶部"}],"answer":"D"},{"id":205,"type":"单选题","number":205,"question":"多轴飞行器动力装置多为电动系统的最主要原因是________","options":[{"key":"A","text":"电动系统尺寸较小且较为廉价"},{"key":"B","text":"电动系统形式简单且电机速度响应快"},{"key":"C","text":"电动系统干净且不依赖传统生物燃料"},{"key":"D","text":"电动系统较为廉价"}],"answer":"B"},{"id":206,"type":"单选题","number":206,"question":"相对于传统直升机，多轴最大的优势是________","options":[{"key":"A","text":"气动效率高"},{"key":"B","text":"载重能力强"},{"key":"C","text":"环保"},{"key":"D","text":"结构与控制简单"}],"answer":"D"},{"id":207,"type":"单选题","number":207,"question":"某多轴飞行器动力电池标有 22.2V，指的是________","options":[{"key":"A","text":"6S 锂电池"},{"key":"B","text":"22.2S 锂电池"},{"key":"C","text":"11.1S 锂电池"},{"key":"D","text":"3S 锂电池"}],"answer":"A"},{"id":208,"type":"单选题","number":208,"question":"描述一个多轴无人机地面遥控发射机是“美国手”，指的是________","options":[{"key":"A","text":"右手上下动作控制油门或高度"},{"key":"B","text":"左手上下动作控制油门或高度"},{"key":"C","text":"右手左右动作控制油门或高度"},{"key":"D","text":"左手左右动作控制油门或高度"}],"answer":"B"},{"id":209,"type":"单选题","number":209,"question":"我国民用无人机主要应用在________①农林植保②航拍摄影③电力巡查④遥感探测⑤\n靶机等领域中。","options":[{"key":"A","text":"①②③④⑤"},{"key":"B","text":"①②③④"},{"key":"C","text":"①②③"},{"key":"D","text":"①②"}],"answer":"B"},{"id":210,"type":"单选题","number":210,"question":"2018 年 9 月，IMT-2020（5G）推进组发布了《5G 无人机应用》白皮书，该白皮书基于\n5G 的通信能力提出了“数字网联天空”方案，该方案拟通过三个阶段________来实现。","options":[{"key":"A","text":"网联化、实时化、智能化"},{"key":"B","text":"实时化、网联化、智能化"},{"key":"C","text":"智能化 、实时化、网联化"},{"key":"D","text":"智能化、网联化、实时化"}],"answer":"A"},{"id":211,"type":"单选题","number":211,"question":"________规定了管理机构、行业协会对无人机系统驾驶员的管理、民航局对无人机系统\n驾驶员的管理等内容。","options":[{"key":"A","text":"《轻小无人机运行规定（试行）》AC-91-FS-2015-31"},{"key":"B","text":"《民用无人机驾驶员管理规定》AC-61-FS-2018-20R2"},{"key":"C","text":"《民用无人驾驶航空器系统空中交通管理办法》MD-TM-2016-004"},{"key":"D","text":"《民用无人驾驶航空器实名制登记管理规定》AP-45-AA-2017-03"}],"answer":"B"},{"id":212,"type":"单选题","number":212,"question":"________明确了在航路航线、进近（终端）和机场管制地带等民用航空使用空域范围内\n或者对以上空域内运行存在影响的民用无人驾驶航空器系统活动的空中交通管理工作要求。","options":[{"key":"A","text":"《轻小无人机运行规定（试行）》AC-91-FS-2015-31"},{"key":"B","text":"《民用无人机驾驶员管理规定》AC-61-FS-2018-20R2"},{"key":"C","text":"《民用无人驾驶航空器系统空中交通管理办法》MD-TM-2016-004"},{"key":"D","text":"《民用无人驾驶航空器实名制登记管理规定》AP-45-AA-2017-03"}],"answer":"C"},{"id":213,"type":"单选题","number":213,"question":"________规定了职责、民用无人机实名登记流程、信息内容、登记标志、标识要求、更\n新等内容。","options":[{"key":"A","text":"《轻小无人机运行规定（试行）》AC-91-FS-2015-31"},{"key":"B","text":"《民用无人机驾驶员管理规定》AC-61-FS-2018-20R2"},{"key":"C","text":"《民用无人驾驶航空器系统空中交通管理办法》MD-TM-2016-004"},{"key":"D","text":"《民用无人驾驶航空器实名制登记管理规定》AP-45-AA-2017-03"}],"answer":"D"},{"id":214,"type":"单选题","number":214,"question":"________规定了民用无人机机长的职责和权限、民用无人机驾驶员资格要求、禁止粗心\n或鲁莽的操作要求、摄入酒精和药物的限制、飞行前准备、限制区域、视距内运行、视距外\n运行、民用无人机运行的仪表、设备和标识要求、管理方式、无人机云提供商须具备的条件、\n植保无人机运行要求、无人飞艇运行要求等内容。","options":[{"key":"A","text":"《轻小无人机运行规定（试行）》AC-91-FS-2015-31"},{"key":"B","text":"《民用无人机驾驶员管理规定》AC-61-FS-2018-20R2"},{"key":"C","text":"《民用无人驾驶航空器系统空中交通管理办法》MD-TM-2016-004"},{"key":"D","text":"《民用无人驾驶航空器实名制登记管理规定》AP-45-AA-2017-03"}],"answer":"A"},{"id":215,"type":"单选题","number":215,"question":"最大起飞重量超过 25 千克不超过 150 千克，且空机重量超过 15 千克的无人机，指的是\n________","options":[{"key":"A","text":"轻型无人机"},{"key":"B","text":"小型无人机"},{"key":"C","text":"中型无人机"},{"key":"D","text":"大型无人机"}],"answer":"C"},{"id":216,"type":"单选题","number":216,"question":"无人机分类的方法多种多样，其中通常所说的固定翼无人机、多旋翼无人机、无人直升\n机是按照________的方法来分类的。","options":[{"key":"A","text":"动力及能源"},{"key":"B","text":"控制方式"},{"key":"C","text":"平台结构"},{"key":"D","text":"续航时间"}],"answer":"C"},{"id":217,"type":"单选题","number":217,"question":"微型无人机，是指空机重量小于________千克，设计性能同时满足飞行真高不超过\n________米、最大飞行速度不超过________千米/小时、无线电发射设备符合微功率短距离\n无线电发射设备技术要求的遥控驾驶航空器。","options":[{"key":"A","text":"4，20,40"},{"key":"B","text":"0.25,50,40"},{"key":"C","text":"0.25,20,40"},{"key":"D","text":"4,50,40"}],"answer":"B"},{"id":218,"type":"单选题","number":218,"question":"轻型无人机，是指同时满足空机重量不超过________千克，最大起飞重量不超过\n________千克，最大飞行速度不超过________千米/小时，具备符合空域管理要求的空域保\n持能力和可靠被监视能力的遥控驾驶航空器，但不包括微型无人机。","options":[{"key":"A","text":"2,7,100"},{"key":"B","text":"3,7,100"},{"key":"C","text":"4,7,100"},{"key":"D","text":"5,7,100"}],"answer":"C"},{"id":219,"type":"单选题","number":219,"question":"旋翼类无人机单机应用中无人机驾驶员一般采用遥控器直接控制无人机的姿态和位置，\n不采用任何传感器和增稳控制，高度、方向和姿态全部手动控制，这种模式属于________","options":[{"key":"A","text":"手动模式"},{"key":"B","text":"GPS/北斗模式"},{"key":"C","text":"姿态模式"}],"answer":"A"},{"id":220,"type":"单选题","number":220,"question":"旋翼类无人机单机应用中无人机驾驶员一般采用遥控器直接控制无人机的姿态和位置，\n只通过无人机内置的陀螺仪或气压计或光流传感器保持高度的模式，属于________","options":[{"key":"A","text":"手动模式"},{"key":"B","text":"GPS/北斗模式"},{"key":"C","text":"姿态模式"}],"answer":"C"},{"id":221,"type":"单选题","number":221,"question":"无人机的多机协同方式主要分为两类________","options":[{"key":"A","text":"一站多机模式、长僚机编队模式"},{"key":"B","text":"多站多机模式、长僚机编队模式"},{"key":"C","text":"多站多机模式、长机编队模式"},{"key":"D","text":"一站多机模式、僚机编队模式"}],"answer":"A"},{"id":222,"type":"单选题","number":222,"question":"无人机的研制起初源于________","options":[{"key":"A","text":"军事应用"},{"key":"B","text":"农林植保"},{"key":"C","text":"航拍摄影"},{"key":"D","text":"航拍摄影"}],"answer":"A"},{"id":223,"type":"单选题","number":223,"question":"国际标准大气的物理参数的相互关系是________","options":[{"key":"A","text":"温度不变时,压力与体积成正比"},{"key":"B","text":"体积不变时，压力和温度成正比"},{"key":"C","text":"压力不变时，体积和温度成反比"}],"answer":"B"},{"id":224,"type":"单选题","number":224,"question":"影响空气粘性力的主要因素是________","options":[{"key":"A","text":"空气清洁度"},{"key":"B","text":"空气温度"},{"key":"C","text":"相对湿度"}],"answer":"B"},{"id":225,"type":"单选题","number":225,"question":"一般不用来给无人机提供高度信息的传感器是? ________","options":[{"key":"A","text":"GPS、气压计"},{"key":"B","text":"温度传感器、大气湿度传感器"},{"key":"C","text":"无线电高度表、超声波传感器"}],"answer":"B"},{"id":226,"type":"单选题","number":226,"question":"多轴飞行器常用螺旋桨的剖面形状是________","options":[{"key":"A","text":"对称型"},{"key":"B","text":"凹凸型"},{"key":"C","text":"S 型"}],"answer":"B"},{"id":227,"type":"单选题","number":227,"question":"大多数多轴飞行器自主飞行过程利用________实现高度感知。","options":[{"key":"A","text":"气压高度计"},{"key":"B","text":"指南针"},{"key":"C","text":"GPS/北斗"},{"key":"D","text":"超声波高度计"}],"answer":"C"},{"id":228,"type":"单选题","number":228,"question":"垂直爬升时升限为海拔 1000 米的多轴飞行器，如果在 10km/h 的前飞中爬升，其升限\n________","options":[{"key":"A","text":"将降低"},{"key":"B","text":"将升高"},{"key":"C","text":"将保持不变"}],"answer":"B"},{"id":229,"type":"单选题","number":229,"question":"不应属于无人机飞控计算机任务范畴的是________","options":[{"key":"A","text":"数据中继"},{"key":"B","text":"姿态稳定与控制"},{"key":"C","text":"自主飞行控制"}],"answer":"A"},{"id":230,"type":"单选题","number":230,"question":"飞机的重心位置影响飞机的________","options":[{"key":"A","text":"纵向稳定性"},{"key":"B","text":"方向稳定性"},{"key":"C","text":"横向稳定性"}],"answer":"A"},{"id":231,"type":"单选题","number":231,"question":"同一架无人机于某日中午和傍晚进行两次 GPS 高度 200 米的巡航飞行，地面基准气压\n相同的前提下________","options":[{"key":"A","text":"中午的气压高度高"},{"key":"B","text":"傍晚的气压高度高"},{"key":"C","text":"中午和傍晚的气压高度一样高"}],"answer":"A"},{"id":232,"type":"单选题","number":232,"question":"多轴的“轴”指________","options":[{"key":"A","text":"舵机轴"},{"key":"B","text":"飞行器运动坐标轴"},{"key":"C","text":"动力输出轴"}],"answer":"C"},{"id":233,"type":"单选题","number":233,"question":"着陆目测是驾驶员对飞机飞行高度和降落点进行目视判断，对于目测质量的评判（ ）。","options":[{"key":"A","text":"飞机没有达到目测接地范围就接地的，叫目测低"},{"key":"B","text":"飞机没有达到目测接地范围就接地的，叫目测高"},{"key":"C","text":"飞机超过目测接地范围才接地的，叫目测低"}],"answer":"A"},{"id":234,"type":"单选题","number":234,"question":"无人机航测得出的全景影像图，适合以下哪种情形？________","options":[{"key":"A","text":"大比例精度制图"},{"key":"B","text":"自然灾害经济救援"},{"key":"C","text":"土地资源调查"},{"key":"D","text":"环境检测"}],"answer":"B"},{"id":235,"type":"单选题","number":235,"question":"通常来说，________适合执行单兵的，侦查区域相对较小（侦查面积在 1-2 平方公里以\n内），对留空时间要求不高（35min 以内）的侦查任务。","options":[{"key":"A","text":"旋翼无人机"},{"key":"B","text":"固定翼无人机"},{"key":"C","text":"复合翼无人机"}],"answer":"A"},{"id":236,"type":"单选题","number":236,"question":"因为红外正射影像和三维模型的成果分辨率低，一般情况下不会使用红外成像成果用于\n________，多数情况下用于观察和标记。","options":[{"key":"A","text":"建模"},{"key":"B","text":"成像"},{"key":"C","text":"测量"}],"answer":"C"},{"id":237,"type":"单选题","number":237,"question":"遥控无人机由爬升转为平飞时________","options":[{"key":"A","text":"到达预定高度时，开始改平飞"},{"key":"B","text":"超过预定高度 10-20 米时，开始改平飞"},{"key":"C","text":"上升至预定高度前 10-20 米时，开始改平飞"}],"answer":"C"},{"id":238,"type":"单选题","number":238,"question":"如观察到其他飞机的灯光是右红左绿时，应将该机判断为________","options":[{"key":"A","text":"与自己相向飞行"},{"key":"B","text":"与自己顺向飞行；"},{"key":"C","text":"没有发生相撞的可能"}],"answer":"A"},{"id":239,"type":"单选题","number":239,"question":"关于升阻比和载荷因数，以下说法错误的是? ________","options":[{"key":"A","text":"在最小阻力迎角下飞行，可以获得最大的升阻比"},{"key":"B","text":"载荷因数与升阻比成正比"},{"key":"C","text":"升力与重力的比值称为载荷因数"}],"answer":"A"},{"id":240,"type":"单选题","number":240,"question":"为保障飞行安全，建议无论是在白天还是夜间,当发动机在运转时就打开________","options":[{"key":"A","text":"防撞灯"},{"key":"B","text":"着陆灯"},{"key":"C","text":"航向等"}],"answer":"A"},{"id":241,"type":"单选题","number":241,"question":"下列哪种方式可以使多轴飞行器搭载的摄影装备拍摄角度实现全仰拍摄且不穿帮？\n________","options":[{"key":"A","text":"多轴飞行器使用折叠式脚架"},{"key":"B","text":"多轴飞行器搭载下沉式云台"},{"key":"C","text":"多轴飞行器搭载前探式云台"}],"answer":"C"},{"id":242,"type":"单选题","number":242,"question":"多轴飞行器飞控板上一般会安装________","options":[{"key":"A","text":"3 个角速率陀螺"},{"key":"B","text":"1 个角速率陀螺"},{"key":"C","text":"6 个角速率陀螺"}],"answer":"A"},{"id":243,"type":"单选题","number":243,"question":"地面的地形和大的建筑物会：________","options":[{"key":"A","text":"汇聚风的流向"},{"key":"B","text":"产生会快速改变方向和速度的阵风"},{"key":"C","text":"产生稳定方向和速度的阵风"}],"answer":"B"},{"id":244,"type":"单选题","number":244,"question":"高海拔地区，以下那个尺寸的螺旋桨更适用？________","options":[{"key":"A","text":"1835"},{"key":"B","text":"1855"},{"key":"C","text":"1035"}],"answer":"A"},{"id":245,"type":"单选题","number":245,"question":"下列哪项对飞机阻力大小影响不大？________","options":[{"key":"A","text":"飞行速度、空气密度、机翼面积"},{"key":"B","text":"飞机的翼型和平面形状"},{"key":"C","text":"飞机的安装角和上反角"}],"answer":"C"},{"id":246,"type":"单选题","number":246,"question":"在北半球摩擦层中，低压区的风向为________","options":[{"key":"A","text":"逆时针向外旋转"},{"key":"B","text":"逆时针向内旋转"},{"key":"C","text":"顺时针向内旋转"}],"answer":"B"},{"id":247,"type":"单选题","number":247,"question":"热雷暴的形成原因是________","options":[{"key":"A","text":"地面水汽蒸发"},{"key":"B","text":"冷空气冲击暖空气而形成上升运动"},{"key":"C","text":"地面受热不均"}],"answer":"C"},{"id":248,"type":"单选题","number":248,"question":"下列说法中，哪一种对无人机教员合格证申请人的要求必须是________","options":[{"key":"A","text":"具备无人机应急处理程序方面的技术"},{"key":"B","text":"在所申请的无人机上担任机长经历时间多于 100 小时"},{"key":"C","text":"在所申请的无人机上飞行经历不少于 100 小时"}],"answer":"B"},{"id":249,"type":"单选题","number":249,"question":"大多数多轴飞行器自主飞行过程利用________实现位置感知","options":[{"key":"A","text":"平台惯导"},{"key":"B","text":"捷联惯导"},{"key":"C","text":"GPS"}],"answer":"C"},{"id":250,"type":"单选题","number":250,"question":"地面站地图航迹显示系统可为无人机驾驶员提供飞行器________等信息","options":[{"key":"A","text":"位置"},{"key":"B","text":"飞行姿态"},{"key":"C","text":"飞控姿态"}],"answer":"A"},{"id":251,"type":"单选题","number":251,"question":"在中华人民共和国境内，按照飞行管制责任划分为________","options":[{"key":"A","text":"飞行管制区、飞行管制分区、机场飞行管制区"},{"key":"B","text":"飞行管制区、飞行情报区、机场飞行管制区"},{"key":"C","text":"航路飞行管制区、空域飞行管制区、机场飞行管制区"}],"answer":"A"},{"id":252,"type":"单选题","number":252,"question":"无人机驾驶员舵面遥控操纵飞机时________","options":[{"key":"A","text":"拉杆飞机转入下降"},{"key":"B","text":"推油门飞机转入下降"},{"key":"C","text":"推杆飞机转入下降"}],"answer":"C"},{"id":253,"type":"单选题","number":253,"question":"多旋翼无人机自驾仪与机架的隔振改造方法，下列说法不正确的是________","options":[{"key":"A","text":"双面泡沫胶. 尼龙扣"},{"key":"B","text":"螺纹固定连接"},{"key":"C","text":"凝胶垫"},{"key":"D","text":"胶水固定"}],"answer":"A"},{"id":254,"type":"单选题","number":254,"question":"多旋翼在测试电机转动方向最重要的安全措施是________","options":[{"key":"A","text":"拆卸螺旋桨"},{"key":"B","text":"拆卸机臂"},{"key":"C","text":"拆卸电机"},{"key":"D","text":"上电测试"}],"answer":"A"},{"id":255,"type":"单选题","number":255,"question":"电机的定期维护的时间间隔________","options":[{"key":"A","text":"一星期"},{"key":"B","text":"一个月"},{"key":"C","text":"可根据电机的形式. 使用环境决定"},{"key":"D","text":"一年"}],"answer":"A"},{"id":256,"type":"单选题","number":256,"question":"电机在焊接插头时， 应用________给插头上锡。","options":[{"key":"A","text":"低熔点焊锡丝"},{"key":"B","text":"高熔点焊锡"},{"key":"C","text":"焊锡膏"},{"key":"D","text":"松香"}],"answer":"A"},{"id":257,"type":"单选题","number":257,"question":"电子调速器（电调） 输出端通过 3 根单色线与无刷电机连接，任意________2 根线序\n后电动机将反转运行。","options":[{"key":"A","text":"调换"},{"key":"B","text":"短接"},{"key":"C","text":"并联"},{"key":"D","text":"串联"}],"answer":"A"},{"id":258,"type":"单选题","number":258,"question":"多旋翼无人机机体平台起装载和承力的作用， 加强对机体平台的检查并及时发现. 正\n确处理裂纹， 消除飞行中因机体平台振动所导致的机体平台________风险。","options":[{"key":"A","text":"故障"},{"key":"B","text":"断裂"},{"key":"C","text":"变形"},{"key":"D","text":"爆炸"}],"answer":"B"},{"id":259,"type":"单选题","number":259,"question":"多旋翼无人机机体平台作为承力部件， 需进行定期检查， 若机体平台变形特别是机臂\n变形会导致产生异步振动， 所以机臂的刚度________","options":[{"key":"A","text":"越小越好"},{"key":"B","text":"越大越好"},{"key":"C","text":"随意"},{"key":"D","text":"越软越好"}],"answer":"C"},{"id":260,"type":"单选题","number":260,"question":"多旋翼无人机机体一般由机身________起落架和结构挂载件组成。","options":[{"key":"A","text":"电气系统"},{"key":"B","text":"任务载荷设备"},{"key":"C","text":"机臂"},{"key":"D","text":"操作手"}],"answer":"A"},{"id":261,"type":"单选题","number":261,"question":"多旋翼无人机抗风性测试结果表明，无人机抗风性与无人机的________有关，下列选项\n错误的是。","options":[{"key":"A","text":"电池容量"},{"key":"B","text":"飞行控制系统（自驾仪） 算法的精确度"},{"key":"C","text":"PID 算法的协调性"},{"key":"D","text":"大小"}],"answer":"A"},{"id":262,"type":"单选题","number":262,"question":"多旋翼无人机螺旋桨静平衡测试中， 有孔位分配法、削减法和________","options":[{"key":"A","text":"增重法"},{"key":"B","text":"剪切法"},{"key":"C","text":"更换法"},{"key":"D","text":"同步"}],"answer":"B"},{"id":263,"type":"单选题","number":263,"question":"飞机飞行中通过什么与地面站连接？________","options":[{"key":"A","text":"飞控 GPS"},{"key":"B","text":"WIFI 模块电台"},{"key":"C","text":"接收机遥控器"},{"key":"D","text":"4g 信号"}],"answer":"A"},{"id":264,"type":"单选题","number":264,"question":"多旋翼无人机在姿态遥控状态下， 如出现动力失效则正确的处理方法是? ________","options":[{"key":"A","text":"遥控器油门保持中间略上位置"},{"key":"B","text":"接地瞬间将油门收至最小"},{"key":"C","text":"始终保持油门最大位置试图恢复动力"},{"key":"D","text":"始终保持油门最小位置试图恢复动力"}],"answer":"A"},{"id":265,"type":"单选题","number":265,"question":"多旋翼无人机机体一般不使用材料________","options":[{"key":"A","text":"碳纤维材料"},{"key":"B","text":"高强度工程塑料"},{"key":"C","text":"玻纤维材料"},{"key":"D","text":"不锈钢材料"}],"answer":"B"},{"id":266,"type":"单选题","number":266,"question":"某多轴动力电池容量为 8000MAH，表示________","options":[{"key":"A","text":"理论上，以 6A 电流放电，可放电 1 小时"},{"key":"B","text":"理论上，以 8A 电流放电，可放电 1 小时"},{"key":"C","text":"理论上，以 8000A 电流放电，可放电 1 小时"},{"key":"D","text":"理论上，以 1A 电流放电，可放电 8 小时"}],"answer":"B"},{"id":267,"type":"单选题","number":267,"question":"以下哪种动力电池放电电流最大________","options":[{"key":"A","text":"2Ah, 300A"},{"key":"B","text":"30000mAh，50A"},{"key":"C","text":"20000mAh，10A"},{"key":"D","text":"20000mAh，5c"}],"answer":"D"},{"id":268,"type":"单选题","number":268,"question":"下面关于气团的叙述哪一个正确________","options":[{"key":"A","text":"我国地域广大，能形成各种气团"},{"key":"B","text":"气团离开源地，其性质将会发生变化"},{"key":"C","text":"气团只形成于极地和大洋地区"},{"key":"D","text":"气团在任何地方都能保持其原有性质不变"}],"answer":"B"},{"id":269,"type":"单选题","number":269,"question":"多轴飞行器都有哪些用途①应急救灾；②军用侦察；③警用监视；④娱乐；⑤广电行业。\n________","options":[{"key":"A","text":"①④⑤"},{"key":"B","text":"②③④"},{"key":"C","text":"①②③④⑤"}],"answer":"C"},{"id":270,"type":"单选题","number":270,"question":"无人机驾驶员进行起飞前控制站检查内容不必包括________","options":[{"key":"A","text":"控制站软件检查"},{"key":"B","text":"控制站操作系统检查"},{"key":"C","text":"预规划航线及航点检查"}],"answer":"B"},{"id":271,"type":"单选题","number":271,"question":"水平能见度小于________公里的，起飞时还应当打开跑道灯灯，着陆时还应当打开航空\n器着陆方向（着陆的反航向）上保障飞行的全部灯光","options":[{"key":"A","text":"3"},{"key":"B","text":"2"},{"key":"C","text":"1"}],"answer":"C"},{"id":272,"type":"单选题","number":272,"question":"无人机系统中的 GPS 模块为飞控提供了哪些信息？________","options":[{"key":"A","text":"位置，高度与地速"},{"key":"B","text":"传感器，姿态与加速度"},{"key":"C","text":"经纬度，高度与空速"}],"answer":"A"},{"id":273,"type":"单选题","number":273,"question":"对于民用无人机运行的仪表、设备和标识要求中，用于记录、回放和分析飞行过程的飞\n行数据记录系统，且数据信息至少保存________","options":[{"key":"A","text":"一个月"},{"key":"B","text":"三个月"},{"key":"C","text":"半年"}],"answer":"B"},{"id":274,"type":"单选题","number":274,"question":"CW1545 和 CCW1406 螺旋桨，哪个螺距大? ________","options":[{"key":"A","text":"CW1545"},{"key":"B","text":"CCW1406"},{"key":"C","text":"一样大"}],"answer":"B"},{"id":275,"type":"单选题","number":275,"question":"无人机左侧风中起飞，侧风使飞机机头向________偏转的趋势","options":[{"key":"A","text":"左"},{"key":"B","text":"右"},{"key":"C","text":"视风速的大小不同可能向左也可能向右"}],"answer":"A"},{"id":276,"type":"单选题","number":276,"question":"不属于抵消旋翼机反转力矩的方法有________","options":[{"key":"A","text":"尾桨"},{"key":"B","text":"共轴旋翼"},{"key":"C","text":"增大旋翼半径"}],"answer":"C"},{"id":277,"type":"单选题","number":277,"question":"多轴飞行器的旋翼旋转方向一般为________","options":[{"key":"A","text":"俯视多轴飞行器顺时针旋翼"},{"key":"B","text":"俯视多轴飞行器逆时针旋翼"},{"key":"C","text":"俯视多轴飞行器两两对应"}],"answer":"C"},{"id":278,"type":"单选题","number":278,"question":"多轴飞行器在前飞中必然会产生________变化","options":[{"key":"A","text":"偏航角"},{"key":"B","text":"横滚角"},{"key":"C","text":"俯仰角"}],"answer":"C"},{"id":279,"type":"单选题","number":279,"question":"无人机搭载任务设备重量主要受限制于________","options":[{"key":"A","text":"最大起飞重量"},{"key":"B","text":"空重"},{"key":"C","text":"载重能力"}],"answer":"C"},{"id":280,"type":"单选题","number":280,"question":"以下关于舵面遥控（纯手动） 、姿态遥控、人工修正（即 GPS 模式） 说法不正确的\n是？________","options":[{"key":"A","text":"人工修正模式下，飞控内外回路都参与工作"},{"key":"B","text":"姿态遥控模式下，飞控内回路不参与工作，外回路参与工作提供位置信息"},{"key":"C","text":"舵面遥控模式下，飞控内外回路都不参与工作"}],"answer":"B"},{"id":281,"type":"单选题","number":281,"question":"电动机按照工作电源种类划分，可分为________","options":[{"key":"A","text":"驱动用电动机，控制用电动机"},{"key":"B","text":"高速电动机，低速电动机"},{"key":"C","text":"无刷电动机，有刷电动机"},{"key":"D","text":"直流电动机，交流电动机"}],"answer":"D"},{"id":282,"type":"单选题","number":282,"question":"轻小型无人机均采用________电动机作为其动力输出装置。","options":[{"key":"A","text":"无刷直流"},{"key":"B","text":"有刷直流"},{"key":"C","text":"交流"}],"answer":"A"},{"id":283,"type":"单选题","number":283,"question":"螺旋桨根据旋转方向不同可以分为正桨________和反桨________","options":[{"key":"A","text":"CCW,CW"},{"key":"B","text":"CW,CCW"},{"key":"C","text":"CW,CDW"},{"key":"D","text":"DW.CCW"}],"answer":"A"},{"id":284,"type":"单选题","number":284,"question":"Ni-Cd 指的是________","options":[{"key":"A","text":"锂离子电池"},{"key":"B","text":"锂聚合物电池"},{"key":"C","text":"镍铬电池"},{"key":"D","text":"镍氢电池"}],"answer":"C"},{"id":285,"type":"单选题","number":285,"question":"Ni-MH 指的是________","options":[{"key":"A","text":"锂离子电池"},{"key":"B","text":"锂聚合物电池"},{"key":"C","text":"镍铬电池"},{"key":"D","text":"镍氢电池"}],"answer":"D"},{"id":286,"type":"单选题","number":286,"question":"充电电池如果以 200mA（0.2C）放电，时间可持续________小时。","options":[{"key":"A","text":"0.2"},{"key":"B","text":"0.4"},{"key":"C","text":"1"},{"key":"D","text":"5"}],"answer":"D"},{"id":287,"type":"单选题","number":287,"question":"电池不放电时，电池两极之间的电位差被称为________","options":[{"key":"A","text":"终止电压"},{"key":"B","text":"放点深度"},{"key":"C","text":"开路电压"}],"answer":"C"},{"id":288,"type":"单选题","number":288,"question":"________是电池充电的最高限制电压，一般认为将锂电池的空载电压充到________就认\n为电充满。","options":[{"key":"A","text":"2.8V"},{"key":"B","text":"3.0V"},{"key":"C","text":"3.7V"},{"key":"D","text":"4.2V"}],"answer":"D"},{"id":289,"type":"单选题","number":289,"question":"微型无人机，是指空机重量小于________千克，设计性能同时满足飞行真高不超过 50\n米、最大飞行速度不超过 40 千米/小时、无线电发射设备符合微功率短距离无线电发射设备\n技术要求的遥控驾驶航空器。","options":[{"key":"A","text":"0.15"},{"key":"B","text":"0.25"},{"key":"C","text":"0.35"},{"key":"D","text":"0.45"}],"answer":"B"},{"id":290,"type":"单选题","number":290,"question":"螺旋桨根据旋转方向不同可以分为正桨和反桨，其中正桨旋转方向为________旋转，反\n桨旋转方向为________旋转。","options":[{"key":"A","text":"顺时针，逆时针"},{"key":"B","text":"逆时针，逆时针"},{"key":"C","text":"逆时针，顺时针"},{"key":"D","text":"顺时针，顺时针"}],"answer":"C"},{"id":291,"type":"单选题","number":291,"question":"GPS/北斗天线的安装尽量选择机身外________遮挡的地方，并且选择干扰小的地方，一\n定要________机身的主电源线等容易产生电磁干扰的位置。","options":[{"key":"A","text":"有，接近"},{"key":"B","text":"无，远离"},{"key":"C","text":"有，远离"},{"key":"D","text":"无，接近"}],"answer":"B"},{"id":292,"type":"单选题","number":292,"question":"以下不属于延长无人机电池寿命策略的是________","options":[{"key":"A","text":"充分利用电池报警器，一旦报警就应尽快降落。"},{"key":"B","text":"少飞一分钟，可使电池寿命多飞一个循环"},{"key":"C","text":"多准备几块电池，不把电池飞到超过容量极限"},{"key":"D","text":"在三个月内没有使用电池，将电池充满电后继续保存"}],"answer":"D"},{"id":293,"type":"单选题","number":293,"question":"存储无人机的所有设备应装箱存放在室内，保持干燥，存储温度为________","options":[{"key":"A","text":"-40℃～50℃"},{"key":"B","text":"-50℃～60℃"},{"key":"C","text":"-30℃～60℃"},{"key":"D","text":"-40℃～60℃"}],"answer":"D"},{"id":294,"type":"单选题","number":294,"question":"在无人机电子围栏基数数据库系统中，服务器端主要包括的部分有：无人机电子围栏基\n础数据库的维护、无人机拥有者信息数据维护、无人机信息维护、________","options":[{"key":"A","text":"无人机注册及管理"},{"key":"B","text":"无人机飞行区域/航线申请"},{"key":"C","text":"用户注册及管理"},{"key":"D","text":"无人机飞行区域/航线审批数据维护"}],"answer":"D"},{"id":295,"type":"单选题","number":295,"question":"在无人机电子围栏基数数据库系统中，客户端主要包括的部分有：用户注册及管理、无\n人机飞行区域/航线申请审批、________","options":[{"key":"A","text":"电子签名生成与维护"},{"key":"B","text":"无人机飞行状态显示"},{"key":"C","text":"审批通过的无人机飞行区域/航线数据下载"}],"answer":"C"},{"id":296,"type":"单选题","number":296,"question":"无人机地面实时监控平台的未来发展趋势是智能化、高性能、界面简易化和________","options":[{"key":"A","text":"功能模块化"},{"key":"B","text":"系统数字化"},{"key":"C","text":"电路集成化"}],"answer":"A"},{"id":297,"type":"单选题","number":297,"question":"数据动态监控模块在实时监控平台上显示，是平台客户端的重要组成模块，其包含\n________、视频模块和任务管理模块。","options":[{"key":"A","text":"数据链路模块"},{"key":"B","text":"地图模块"},{"key":"C","text":"信息处理模块"},{"key":"D","text":"规划模块"}],"answer":"B"},{"id":298,"type":"单选题","number":298,"question":"飞行控制与管理系统故障分类，根据其结构组成将故障划分为测控链路故障、传感器故\n障、________等。","options":[{"key":"A","text":"位置信息源故障"},{"key":"B","text":"数据传输故障"},{"key":"C","text":"任务规划故障"},{"key":"D","text":"执行机构故障"}],"answer":"D"},{"id":299,"type":"单选题","number":299,"question":"飞行控制与管理系统故障分类，根据其信息源的不同又可以细分为姿态信息源故障、位\n置信息源故障、高度信息源故障、________信息源故障和速度信息源故障。","options":[{"key":"A","text":"时间"},{"key":"B","text":"航向"},{"key":"C","text":"角度"},{"key":"D","text":"规划"}],"answer":"B"},{"id":300,"type":"单选题","number":300,"question":"由于飞行环境具有高度不确定性，无人机故障的产生具有突发性和________，其必然会\n影响无人机的飞行控制和管理系统的正常功能。","options":[{"key":"A","text":"随机性"},{"key":"B","text":"任意性"},{"key":"C","text":"不确定性"}],"answer":"A"},{"id":301,"type":"单选题","number":301,"question":"伪造、复制或篡改执照或合格证的行为，局方或授权方可视其情节轻重，给予警告、暂\n扣执照或合格证（ ）或吊销执照","options":[{"key":"A","text":"3 到 6 个月"},{"key":"B","text":"1 到 6 个月"},{"key":"C","text":"1 到 3 个月"}],"answer":"B"},{"id":302,"type":"单选题","number":302,"question":"无人机具体执行的飞行任务主要包括到达时间和进入目标方向等，需满足如下要求：\n______ \"","options":[{"key":"A","text":"执行任务时间，进入目标位置"},{"key":"B","text":"返航时间，接近目标的飞行姿态"},{"key":"C","text":"航迹距离约束，固定的目标进入方向"}],"answer":"C"},{"id":303,"type":"单选题","number":303,"question":"民用航空器的适航管理由（ ）负责","options":[{"key":"A","text":"国务院"},{"key":"B","text":"中央军委"},{"key":"C","text":"民航局"}],"answer":"C"},{"id":304,"type":"单选题","number":304,"question":"无人机制造商编写的随机文档 《无人机所有者/信息手册》__________","options":[{"key":"A","text":"不能替代《无人机飞行手册》"},{"key":"B","text":"可以替代《无人机飞行手册》"},{"key":"C","text":"一般情况下可以替代《无人机飞行手册》"}],"answer":"A"},{"id":305,"type":"单选题","number":305,"question":"颁发国内三个层次航空法规的部门分别是：1.全国人大或全国人大常委会；2.国务院、\n中央军委；3.民航总局；4.民航地区管理局","options":[{"key":"A","text":"2.3"},{"key":"B","text":"1.2.4"},{"key":"C","text":"1.2.3"}],"answer":"C"},{"id":306,"type":"单选题","number":306,"question":"如果无人机制造商使用编写的细节更加详细的《无人机驾驶员操作手册》作为主要参考\n__________《无人机飞行手册》","options":[{"key":"A","text":"不可替代"},{"key":"B","text":"一般情况下可以替代"},{"key":"C","text":"由局方批准后可以替代"}],"answer":"C"},{"id":307,"type":"单选题","number":307,"question":"申请飞行计划通常应当于飞行前一日什么时间向空中交通管制部门提出申请,并通知有\n关单位","options":[{"key":"A","text":"17 时前"},{"key":"B","text":"15 时前"},{"key":"C","text":"16 时前"}],"answer":"B"},{"id":308,"type":"单选题","number":308,"question":"民用航空适航管理是对哪几种环节进行管理","options":[{"key":"A","text":"使用和维修"},{"key":"B","text":"设计、制造"},{"key":"C","text":"设计、制造、使用和维修"}],"answer":"C"},{"id":309,"type":"单选题","number":309,"question":"任何单位或者个人未取得________，均不得生产民用航空器","options":[{"key":"A","text":"适航证"},{"key":"B","text":"型号合格证"},{"key":"C","text":"生产许可证"}],"answer":"C"},{"id":310,"type":"单选题","number":310,"question":"无人机制造商编写的随机文档《无人机所有者/信息手册》__________","options":[{"key":"A","text":"特殊飞行器需局方批准"},{"key":"B","text":"不需局方批准"},{"key":"C","text":"需经局方批准"}],"answer":"B"},{"id":311,"type":"单选题","number":311,"question":"关于“民用航空器国籍”正确的是","options":[{"key":"A","text":"自外国租赁的民用航空器不猛申请我国国籍"},{"key":"B","text":"民用航空器可以不进行国籍登记而投入运行"},{"key":"C","text":"民用航空器只能具有一国国籍"}],"answer":"C"},{"id":312,"type":"单选题","number":312,"question":"《民用无人驾驶航空器实名制登记管理规定》颁布于","options":[{"key":"A","text":"2015 年 12 月 29 日"},{"key":"B","text":"2017 年 1 月 1 日"},{"key":"C","text":"2017 年 5 月 6 日"}],"answer":"C"},{"id":313,"type":"单选题","number":313,"question":"空域通常划分为①机场飞行空域②航路.航线③空中禁区.空中限制区和空中危险区。","options":[{"key":"A","text":"①③"},{"key":"B","text":"①②③"},{"key":"C","text":"①②"}],"answer":"B"},{"id":314,"type":"单选题","number":314,"question":"无人机定高平飞时 ，驾驶员面对地面站界面","options":[{"key":"A","text":"切至自主控制模式，尽可放松休息"},{"key":"B","text":"短暂休息，偶尔关注一下飞机状态"},{"key":"C","text":"不断检查空速、高度和航向指示"}],"answer":"C"},{"id":315,"type":"单选题","number":315,"question":"在下列哪种情况下民用航空器可以飞越城市上空","options":[{"key":"A","text":"能见地标的目视飞行时"},{"key":"B","text":"指定的航路必需飞越城市上空时"},{"key":"C","text":"夜间飞行时"}],"answer":"B"},{"id":316,"type":"单选题","number":316,"question":"下列航空法律法规中级别最高的是","options":[{"key":"A","text":"《中华人民共和国民用航空法》"},{"key":"B","text":"《中华人民共和国搜寻援救民用航空器的规定》"},{"key":"C","text":"《中华人民共和国飞行基本规则》"}],"answer":"A"},{"id":317,"type":"单选题","number":317,"question":"个人民用无人机拥有者在“无人机实名登记系统”中登记的信息包括：","options":[{"key":"A","text":"驾驶员姓名、有效证件号码、联系方式"},{"key":"B","text":"拥有者姓名、有效证件号码、工作单位、联系方式"},{"key":"C","text":"拥有者姓名、有效证件号码、使用目的"}],"answer":"C"},{"id":318,"type":"单选题","number":318,"question":"使用多旋翼飞行器作业","options":[{"key":"A","text":"不受环境影响"},{"key":"B","text":"应在人员密集区，如公园、广场等"},{"key":"C","text":"在规定空域使用，且起飞前提醒周边人群远离"}],"answer":"C"},{"id":319,"type":"单选题","number":319,"question":"从事航空飞行活动的单位、个人违反本条例规定，下列哪些情形下①未经批准擅自飞行\n的②未按批准的飞行计划飞行的；③不及时报告或者漏报飞行动态的；④未经批准飞入空中\n限制区、空中危险区的","options":[{"key":"A","text":"①③④"},{"key":"B","text":"①②④"},{"key":"C","text":"①②③④"}],"answer":"C"},{"id":320,"type":"单选题","number":320,"question":"应急航线的主要目的是确保飞机安全返航，规划一条安全返航通道和______，以及\n______。","options":[{"key":"A","text":"应急迫降点，安全返航策略"},{"key":"B","text":"应急迫降点，航线转移策略"},{"key":"C","text":"安全着陆点，安全着陆策略"}],"answer":"B"},{"id":321,"type":"多选题","number":1,"question":"飞机的平衡包括________","options":[{"key":"A","text":"力的平衡"},{"key":"B","text":"横侧平衡"},{"key":"C","text":"力矩的平衡"},{"key":"D","text":"方向平衡"}],"answer":"AC"},{"id":322,"type":"多选题","number":2,"question":"单旋翼带尾桨式旋翼无人机的操作面有________","options":[{"key":"A","text":"副翼"},{"key":"B","text":"尾桨"},{"key":"C","text":"方向舵"},{"key":"D","text":"旋翼"}],"answer":"BD"},{"id":323,"type":"多选题","number":3,"question":"无人驾驶航空器反制设备，是指专门用于防控无人驾驶航空器违规飞行，具有________\n等功能的设备。","options":[{"key":"A","text":"干扰"},{"key":"B","text":"截控"},{"key":"C","text":"捕获"},{"key":"D","text":"摧毁"}],"answer":"ABCD"},{"id":324,"type":"多选题","number":4,"question":"具有常规布局无人机的运动一般是借助________操控无人机飞行需要的横滚、俯仰、姿态\n力矩。","options":[{"key":"A","text":"机翼"},{"key":"B","text":"副翼"},{"key":"C","text":"升降舵"},{"key":"D","text":"方向舵"}],"answer":"BCD"},{"id":325,"type":"多选题","number":5,"question":"以下________属于轻于空气的航空器。","options":[{"key":"A","text":"气球"},{"key":"B","text":"直升机"},{"key":"C","text":"飞艇"},{"key":"D","text":"变模态机"}],"answer":"AC"},{"id":326,"type":"多选题","number":6,"question":"在海拔变高的过程中，旋翼无人机的拉力逐渐降低，出现无法在高原起飞的情况。如果需\n要增加拉力，则需要________。","options":[{"key":"A","text":"增加电机的转速"},{"key":"B","text":"加大桨叶的直径"},{"key":"C","text":"增加桨叶数量"}],"answer":"ABC"},{"id":327,"type":"多选题","number":7,"question":"地面站主要功能以________为主。","options":[{"key":"A","text":"信息研判"},{"key":"B","text":"飞行控制"},{"key":"C","text":"任务规划"},{"key":"D","text":"任务协调"}],"answer":"BC"},{"id":328,"type":"多选题","number":8,"question":"无人机任务规划的时候一定要考虑以下几个约束条件：________","options":[{"key":"A","text":"实时性要求"},{"key":"B","text":"飞行任务要求"},{"key":"C","text":"无人机的物理限制"},{"key":"D","text":"飞行环境限制"}],"answer":"ABCD"},{"id":329,"type":"多选题","number":9,"question":"静压具有以下特点________。","options":[{"key":"A","text":"无论静止的空气还是流动的空气都具有静压力"},{"key":"B","text":"气流中任一点的静压各向同值，且垂直作用面"},{"key":"C","text":"在同一流动断面上，由于风速分布的不均匀性，各点的风速不相等，所以其静压不等"},{"key":"D","text":"气流静压的大小（可用仪表测量）反映了单位体积气流所具有的能够对外做功的静压能的\n多少"}],"answer":"ABD"},{"id":330,"type":"多选题","number":10,"question":"常见的增升原理主要包括________。","options":[{"key":"A","text":"增大机翼弯度"},{"key":"B","text":"增加机翼面积"},{"key":"C","text":"增加机翼上表面附面层能量，延缓上表面气流分离"}],"answer":"ABC"},{"id":331,"type":"多选题","number":11,"question":"无人机在飞行过程中受到的作用力包括________","options":[{"key":"A","text":"升力"},{"key":"B","text":"重力"},{"key":"C","text":"阻力"},{"key":"D","text":"拉力"}],"answer":"ABCD"},{"id":332,"type":"多选题","number":12,"question":"随着迎角的改变，飞行器上的________都会改变。","options":[{"key":"A","text":"重力"},{"key":"B","text":"气动力"},{"key":"C","text":"压力中心"}],"answer":"BC"},{"id":333,"type":"多选题","number":13,"question":"飞行器产生偏转力矩的因素有________","options":[{"key":"A","text":"两翼阻力对重心产生的偏转力矩"},{"key":"B","text":"两翼升力对重心产生的偏转力矩"},{"key":"C","text":"垂尾侧力对重心产生的偏转力矩"},{"key":"D","text":"双发或多发飞行器拉力不平衡产生的偏转力矩"}],"answer":"ACD"},{"id":334,"type":"多选题","number":14,"question":"对于单旋翼带尾桨式旋翼无人机，操纵纵向伺机机构，可使无人机________","options":[{"key":"A","text":"升降"},{"key":"B","text":"转向"},{"key":"C","text":"俯仰"},{"key":"D","text":"进退"},{"key":"E","text":"滚转"},{"key":"F","text":"侧移"}],"answer":"CD"},{"id":335,"type":"多选题","number":15,"question":"机翼产生的升力与哪些要素有关？________","options":[{"key":"A","text":"空气密度"},{"key":"B","text":"机翼面积"},{"key":"C","text":"机翼升力系数"},{"key":"D","text":"飞机与气流的相对速度"}],"answer":"ABCD"},{"id":336,"type":"多选题","number":16,"question":"飞机主要通过操纵________来改变或保持飞行状态的特性。","options":[{"key":"A","text":"升降舵"},{"key":"B","text":"襟翼"},{"key":"C","text":"方向舵"},{"key":"D","text":"副翼"}],"answer":"ACD"},{"id":337,"type":"多选题","number":17,"question":"下面描述正确的是________","options":[{"key":"A","text":"随着速度的增加，诱导阻力逐渐较少"},{"key":"B","text":"随着速度的增加，废阻力逐渐增大"},{"key":"C","text":"随着速度的增加，总阻力先增大后减少"},{"key":"D","text":"随着速度的增加，总阻力先减少后增大"}],"answer":"ABD"},{"id":338,"type":"多选题","number":18,"question":"大气湍流对飞行的影响？________","options":[{"key":"A","text":"改变高度"},{"key":"B","text":"改变航向"},{"key":"C","text":"改变倾斜角"},{"key":"D","text":"改变速度"}],"answer":"ABCD"},{"id":339,"type":"多选题","number":19,"question":"按风的切变类型, 风切变可以分为________。","options":[{"key":"A","text":"风的垂直切变"},{"key":"B","text":"风的水平切变"},{"key":"C","text":"垂直风的切变"},{"key":"D","text":"侧风切变"}],"answer":"ABC"},{"id":340,"type":"多选题","number":20,"question":"飞机积冰的危害有________等。","options":[{"key":"A","text":"会使飞机的空气动力性能变坏"},{"key":"B","text":"会造成飞机剧烈抖动"},{"key":"C","text":"会损坏发动机"},{"key":"D","text":"妨碍目视飞行"},{"key":"E","text":"影响通信"}],"answer":"ABCDE"},{"id":341,"type":"多选题","number":21,"question":"气温的度量有哪三种方式________？","options":[{"key":"A","text":"摄氏温标"},{"key":"B","text":"华氏温标"},{"key":"C","text":"绝对温标"},{"key":"D","text":"相对温标"}],"answer":"ABC"},{"id":342,"type":"多选题","number":22,"question":"海上气象特点有________","options":[{"key":"A","text":"海上气流摩擦力比陆地小、水汽比陆地充足、垂直气流弱"},{"key":"B","text":"海上的雾含水量大、强度大、分布广"},{"key":"C","text":"海上的云通常以低云为主、低层云空气湿度大，平流低云移动快、对飞行影响大"},{"key":"D","text":"海上的对流和乱流少"}],"answer":"ABCD"},{"id":343,"type":"多选题","number":23,"question":"下面描述正确的有________","options":[{"key":"A","text":"压力中心的位置和速度相关"},{"key":"B","text":"连接机翼前后缘的最短直线段叫翼展，机翼左右翼尖之间的直线距离叫翼弦"},{"key":"C","text":"气象上的风向是指风的来向"},{"key":"D","text":"空速传感器是通过飞机飞行时感受到气流的冲击力与空气静止时的压力比，转换出飞机空\n速的传感器"}],"answer":"CD"},{"id":344,"type":"多选题","number":24,"question":"下面哪些可以使飞机产生方向稳定力矩________","options":[{"key":"A","text":"垂直尾翼"},{"key":"B","text":"机翼"},{"key":"C","text":"后掠角"},{"key":"D","text":"上反角"}],"answer":"ACD"},{"id":345,"type":"多选题","number":25,"question":"飞机的稳定性包括________","options":[{"key":"A","text":"纵向稳定性"},{"key":"B","text":"立向稳定性"},{"key":"C","text":"横向稳定性"},{"key":"D","text":"方向稳定性"}],"answer":"ACD"},{"id":346,"type":"多选题","number":26,"question":"减小起飞距离的办法有________","options":[{"key":"A","text":"采用增升装置来增大升力"},{"key":"B","text":"增加发动机的推力"},{"key":"C","text":"顺风起飞"},{"key":"D","text":"采用弹射起飞"}],"answer":"ABD"},{"id":347,"type":"多选题","number":27,"question":"多旋翼无人机通常有________个旋翼等 。","options":[{"key":"A","text":"四"},{"key":"B","text":"六"},{"key":"C","text":"七"},{"key":"D","text":"八"}],"answer":"ABD"},{"id":348,"type":"多选题","number":28,"question":"多旋翼无人机可采用________形外形结构。","options":[{"key":"A","text":"X"},{"key":"B","text":"I"},{"key":"C","text":"V"},{"key":"D","text":"Y"}],"answer":"ABCD"},{"id":349,"type":"多选题","number":29,"question":"形成雷暴的积雨云需要具备以下条件________","options":[{"key":"A","text":"深厚而明显的不稳定能量"},{"key":"B","text":"充沛的水汽"},{"key":"C","text":"闪电"},{"key":"D","text":"足够的冲击力"}],"answer":"ABD"},{"id":350,"type":"多选题","number":30,"question":"影响飞行的云主要包括________","options":[{"key":"A","text":"雨层云"},{"key":"B","text":"高积云"},{"key":"C","text":"积雨云"},{"key":"D","text":"层云"}],"answer":"ACD"},{"id":351,"type":"多选题","number":31,"question":"提升无人机飞行高度的方法有________","options":[{"key":"A","text":"增大机翼面积"},{"key":"B","text":"增大发动机的功率"},{"key":"C","text":"增大展弦比"},{"key":"D","text":"增大翼弦长度"}],"answer":"AB"},{"id":352,"type":"多选题","number":32,"question":"关于马赫数的描述正确的是________","options":[{"key":"A","text":"马赫数就是飞行速度"},{"key":"B","text":"马赫数是指飞行速度与当地声速的比值"},{"key":"C","text":"马赫数等于 1 时，对飞行最有利"},{"key":"D","text":"马赫数是个无量纲量，它的大小可以作为空气受到压缩程度的指标"}],"answer":"BD"},{"id":353,"type":"多选题","number":33,"question":"下面描述正确的有________","options":[{"key":"A","text":"气压是随着高度的增加而减小的，无人机越往高空飞行，飞行所获得的升力就越小"},{"key":"B","text":"空气密度变大，会导致无人机所受到的升力和阻力都会变大"},{"key":"C","text":"无人机动、静压孔积冰，会使速度表、高度表等一些重要驾驶仪表失效或者失真"},{"key":"D","text":"温度太低会导致飞机上的电子电气设备无法正常启动，还会导致液压油或燃油结冰"}],"answer":"ABCD"},{"id":354,"type":"多选题","number":34,"question":"减小诱导阻力的措施有________","options":[{"key":"A","text":"采用较小的机翼平面形状"},{"key":"B","text":"加大机翼的展弦比"},{"key":"C","text":"减小机翼的展弦比"},{"key":"D","text":"在机翼安装翼梢小翼"}],"answer":"ABD"},{"id":355,"type":"多选题","number":35,"question":"提高航程的办法________","options":[{"key":"A","text":"减小发动机的燃油消耗率"},{"key":"B","text":"增加飞机的最大升阻比"},{"key":"C","text":"减小飞机的结构重量"},{"key":"D","text":"安装副油箱"}],"answer":"ABCD"},{"id":356,"type":"多选题","number":36,"question":"关于风切变对低空飞行的影响，以下描述正确的是________","options":[{"key":"A","text":"顺风风切变会使空速增加"},{"key":"B","text":"逆风风切变会使空速减少"},{"key":"C","text":"侧风风切变会使无人机产生侧滑和倾斜"},{"key":"D","text":"垂直风切变会使无人机迎角变化"}],"answer":"CD"},{"id":357,"type":"多选题","number":37,"question":"不可见光指人肉眼看不到的光，例如________等。","options":[{"key":"A","text":"白光"},{"key":"B","text":"紫外线"},{"key":"C","text":"红外线"},{"key":"D","text":"远红外线"}],"answer":"BCD"},{"id":358,"type":"多选题","number":38,"question":"无人机航线一般可以分为三个部分：前往任务区域的航线、任务区域内的航线和返回降\n落区的航线。________以规避危险为主要考虑因素。","options":[{"key":"A","text":"前往任务区域的航线"},{"key":"B","text":"任务区域内的航线"},{"key":"C","text":"返回降落区的航线"}],"answer":"AC"},{"id":359,"type":"多选题","number":39,"question":"区域采集任务的典型例子是________数据采集任务。","options":[{"key":"A","text":"飞行高度"},{"key":"B","text":"正射影像图"},{"key":"C","text":"地形图"},{"key":"D","text":"三维实景图"}],"answer":"BD"},{"id":360,"type":"多选题","number":40,"question":"在空中三角测量前，先对原始影像进行预处理，包括对原始影像进行________。","options":[{"key":"A","text":"匀色处理"},{"key":"B","text":"对比度的调整"},{"key":"C","text":"亮度的调整"},{"key":"D","text":"色彩的调整"}],"answer":"ABCD"},{"id":361,"type":"多选题","number":41,"question":"相对航高和重叠率对模型精度影响较大，下面哪种情况会造成模型精度变差？________","options":[{"key":"A","text":"相对航高增大"},{"key":"B","text":"重叠率变小"},{"key":"C","text":"相对航高变小"},{"key":"D","text":"重叠率增大"}],"answer":"AB"},{"id":362,"type":"多选题","number":42,"question":"下面描述中，正确的有________。","options":[{"key":"A","text":"云台的工作方式与无人机类似。相机基座上有一个惯性测量单元 IMU，可以向云台控制器\n报告其方向"},{"key":"B","text":"当 CCD 表面受到光线照射时，每个感光单位会将电荷反映在组件上，即把光线转变成电荷"},{"key":"C","text":"在进行拍摄前，要根据现场的光比大小、环境复杂程度及拍摄的主题来进行相机参数设置"},{"key":"D","text":"镜头是由一系列镜片组成的一个凸透镜，对光线起汇聚作用，当物体的光线通过凸透镜以\n后汇聚，成为直立的影像"}],"answer":"ABC"},{"id":363,"type":"多选题","number":43,"question":"下面描述中，正确的有________。","options":[{"key":"A","text":"当预先具备完整精确的环境信息时，可一次性规划自起点到终点的最优航迹"},{"key":"B","text":"在环境变化区域不大的情况下，可通过局部更新的方法进行航迹的在线重规划"},{"key":"C","text":"而当环境变化区域较大时，无人机任务规划则必须具备在线重规划功能"},{"key":"D","text":"无人机具体执行的飞行任务主要包括到达时间和目标进入方向等"}],"answer":"ABCD"},{"id":364,"type":"多选题","number":44,"question":"常见 MPS（任务规划系统）硬件系统则多由________、遥控通信单元等组成。","options":[{"key":"A","text":"计算工作站"},{"key":"B","text":"数传单元"},{"key":"C","text":"图传单元"},{"key":"D","text":"导航定位单元"}],"answer":"ABCD"},{"id":365,"type":"多选题","number":45,"question":"信息采集中，以下属于环境信息的是________。","options":[{"key":"A","text":"地形"},{"key":"B","text":"气象"},{"key":"C","text":"电磁"},{"key":"D","text":"决策"}],"answer":"ABC"},{"id":366,"type":"多选题","number":46,"question":"地面站的控制席位主要由________组成。","options":[{"key":"A","text":"飞行控制席"},{"key":"B","text":"任务控制席"},{"key":"C","text":"信息处理席"},{"key":"D","text":"链路监控席"}],"answer":"ABCD"},{"id":367,"type":"多选题","number":47,"question":"无人机任务规划系统具有以下特点________。","options":[{"key":"A","text":"完全自主性"},{"key":"B","text":"准确性、完整性、一致性"},{"key":"C","text":"多无人机的协同性"},{"key":"D","text":"实时的重规划能力"}],"answer":"BCD"},{"id":368,"type":"多选题","number":48,"question":"数字地图比传统地图的应用更加广泛，并且在无人机任务规划系统中发挥重大作用，其\n原因在于数字地图具有以下特点：________。","options":[{"key":"A","text":"共享性"},{"key":"B","text":"动态性"},{"key":"C","text":"实时性"},{"key":"D","text":"选择性"},{"key":"E","text":"灵活性"}],"answer":"ABCDE"},{"id":369,"type":"多选题","number":49,"question":"飞行航线是指航空器预定的飞行路线。通常标志在航空地图上，有________。","options":[{"key":"A","text":"地标点"},{"key":"B","text":"起点"},{"key":"C","text":"检查点"},{"key":"D","text":"终点"}],"answer":"BCD"},{"id":370,"type":"多选题","number":50,"question":"等角航线一般比大圆航线的距离长，二者相差的距离与________有关。","options":[{"key":"A","text":"航线长度"},{"key":"B","text":"航线方向"},{"key":"C","text":"纬度、经度差"},{"key":"D","text":"航线角度"}],"answer":"ABC"},{"id":371,"type":"多选题","number":51,"question":"航路的评价一般应重点关注以下主要因素：________。","options":[{"key":"A","text":"完成指定任务的可能性"},{"key":"B","text":"航路总长度"},{"key":"C","text":"航路机动性"},{"key":"D","text":"被发现和损毁的风险"},{"key":"E","text":"与障碍物碰撞风险"}],"answer":"ABCDE"},{"id":372,"type":"多选题","number":52,"question":"无人机链路系统主要威胁来源有________。","options":[{"key":"A","text":"电磁干扰威胁"},{"key":"B","text":"信息截获威胁"},{"key":"C","text":"欺骗反制威胁"}],"answer":"ABC"},{"id":373,"type":"多选题","number":53,"question":"以下属于非消耗性任务载荷的有________。","options":[{"key":"A","text":"频率干扰系统"},{"key":"B","text":"照明弹"},{"key":"C","text":"激光测距仪"},{"key":"D","text":"无线电中继"}],"answer":"ACD"},{"id":374,"type":"多选题","number":54,"question":"以下属于传统电子围栏的是________。","options":[{"key":"A","text":"震动式电子围栏"},{"key":"B","text":"张力式电子围栏"},{"key":"C","text":"埋地式感应设备"},{"key":"D","text":"电子脉冲式电子围栏"}],"answer":"ABCD"},{"id":375,"type":"多选题","number":55,"question":"雷达具有________、感知距离远、抗干扰能力强等优点，是未来无人机避障技术的研究\n热点。","options":[{"key":"A","text":"穿透能力弱"},{"key":"B","text":"精度高"},{"key":"C","text":"全天候工作"},{"key":"D","text":"感应灵敏"}],"answer":"BCD"},{"id":376,"type":"多选题","number":56,"question":"应主要根据飞行时间和任务要求选用飞行平台和机载任务设备，并根据________，在必\n要时采用多架安防无人机执行任务。","options":[{"key":"A","text":"任务区域面积"},{"key":"B","text":"装备性能指标"},{"key":"C","text":"飞行环境情况"},{"key":"D","text":"载荷装置需求"}],"answer":"AB"},{"id":377,"type":"多选题","number":57,"question":"当任务区域为室内、楼道灯建筑物内部环境时，应首先采用绕飞方对建筑物外部情况进\n行确认，而后在建筑物内部飞行时，应根据周围环境采用________等小幅度动作规划飞行路\n线。","options":[{"key":"A","text":"水平机动"},{"key":"B","text":"直线飞行"},{"key":"C","text":"垂直机动"},{"key":"D","text":"S 线飞行"}],"answer":"ABC"},{"id":378,"type":"多选题","number":58,"question":"我国民用无人机主要应用在________等领域。","options":[{"key":"A","text":"物流货运"},{"key":"B","text":"农林植保"},{"key":"C","text":"航拍摄影"},{"key":"D","text":"遥感探测"}],"answer":"ABCD"},{"id":379,"type":"多选题","number":59,"question":"GB/T 35018-2018《民用无人驾驶航空器系统分类与分级》给出无人机的分类方法，\n________属于按照平台构型的分类方法。","options":[{"key":"A","text":"固定翼无人机"},{"key":"B","text":"电动无人机"},{"key":"C","text":"多旋翼无人机"},{"key":"D","text":"无人直升机"}],"answer":"ACD"},{"id":380,"type":"多选题","number":60,"question":"国家标准 GB/T 35018-2018《民用无人驾驶航空器系统分类与分级》给出了多种多样无\n人机分类方法，以下________属于分类方法。","options":[{"key":"A","text":"平台结构"},{"key":"B","text":"应急处置"},{"key":"C","text":"运营许可"},{"key":"D","text":"用途"}],"answer":"ABCD"},{"id":381,"type":"多选题","number":61,"question":"根据国家标准 GB/T 35018-2018《民用无人驾驶航空器系统分类与分级》规定，________\n是按照控制方式进行分类的。","options":[{"key":"A","text":"人工遥控无人机"},{"key":"B","text":"自动控制无人机"},{"key":"C","text":"自主控制无人机"},{"key":"D","text":"组合控制无人机"}],"answer":"ABCD"},{"id":382,"type":"多选题","number":62,"question":"根据国家标准 GB/T 35018-2018《民用无人驾驶航空器系统分类与分级》规定，以下不\n________属于应急处置分类。","options":[{"key":"A","text":"主动避障"},{"key":"B","text":"低电返航"},{"key":"C","text":"空中拦收"},{"key":"D","text":"气囊回收"}],"answer":"CD"},{"id":383,"type":"多选题","number":63,"question":"根据国家标准 GB/T 35018-2018《民用无人驾驶航空器系统分类与分级》规定，以下\n________不属于无人机降落方式。","options":[{"key":"A","text":"手接回收"},{"key":"B","text":"伞降回收"},{"key":"C","text":"火箭拦收"},{"key":"D","text":"气囊回收"}],"answer":"AC"},{"id":384,"type":"多选题","number":64,"question":"以下________属于固定翼无人机系统起飞方式。","options":[{"key":"A","text":"滑行起飞"},{"key":"B","text":"短距起飞"},{"key":"C","text":"垂直起飞"},{"key":"D","text":"零长发射起飞"}],"answer":"ABCD"},{"id":385,"type":"多选题","number":65,"question":"多旋翼无人机系统主要由多旋翼无人机、________、________和综合保障系统等四个核\n心部分构成。","options":[{"key":"A","text":"控制站"},{"key":"B","text":"摄像头"},{"key":"C","text":"任务载荷"},{"key":"D","text":"无线传输媒介"}],"answer":"AC"},{"id":386,"type":"多选题","number":66,"question":"以下________属于多旋翼无人机搭载的非消耗型任务载荷。","options":[{"key":"A","text":"高清监控设备"},{"key":"B","text":"激光雷达设备"},{"key":"C","text":"倾斜摄影设备"},{"key":"D","text":"植保设备"}],"answer":"ABC"},{"id":387,"type":"多选题","number":67,"question":"飞行控制系统，简称“飞控系统”，相当于无人机的“大脑”，主要包括________三大\n模块。","options":[{"key":"A","text":"飞控计算机"},{"key":"B","text":"遥控器"},{"key":"C","text":"传感器"},{"key":"D","text":"执行机构"}],"answer":"ACD"},{"id":388,"type":"多选题","number":68,"question":"链路系统的本质就是两个相互通信的电台。通过链路系统，无人机系统可以实现数据、\n图像等信息的发送和接收。常用的链路系统分为________。","options":[{"key":"A","text":"遥控上行链路"},{"key":"B","text":"数传链路"},{"key":"C","text":"图传下行链路"},{"key":"D","text":"数图一体的局域网链路"}],"answer":"ABCD"},{"id":389,"type":"多选题","number":69,"question":"飞控计算机的安装必须确保其三个轴向________的精度。","options":[{"key":"A","text":"高度"},{"key":"B","text":"俯仰"},{"key":"C","text":"滚转"},{"key":"D","text":"偏航"}],"answer":"BCD"},{"id":390,"type":"多选题","number":70,"question":"空速管安装位置一定要选在无人机外面气流受影响较小的位置，一般选择在________。","options":[{"key":"A","text":"机身正上方"},{"key":"B","text":"机头正前方"},{"key":"C","text":"垂尾"},{"key":"D","text":"翼尖方向"}],"answer":"BCD"},{"id":391,"type":"多选题","number":71,"question":"无人机保险主要涵盖以下________三个方面。","options":[{"key":"A","text":"无人机产品责任险"},{"key":"B","text":"无人机机身保险"},{"key":"C","text":"无人机第三者责任险"},{"key":"D","text":"无人机意外险"}],"answer":"ABC"},{"id":392,"type":"多选题","number":72,"question":"飞行控制系统，作为无人机系统中核心重要的子系统，在无人机的任务执行中，承担着\n诸如________等任务。","options":[{"key":"A","text":"数据采集处理"},{"key":"B","text":"飞行控制"},{"key":"C","text":"自动导航"},{"key":"D","text":"数据链路信息传输"}],"answer":"ABCD"},{"id":393,"type":"多选题","number":73,"question":"飞行控制软件的软件功能层主要包括为________。","options":[{"key":"A","text":"遥控遥测模块"},{"key":"B","text":"导航模块"},{"key":"C","text":"控制律模块"},{"key":"D","text":"调度管理模块"}],"answer":"ABCD"},{"id":394,"type":"多选题","number":74,"question":"地面控制站功能主要包括以下几个________方面。","options":[{"key":"A","text":"飞行状态的监测与控制"},{"key":"B","text":"地图导航与任务规划"},{"key":"C","text":"飞行数据的记录与回放"},{"key":"D","text":"模拟飞行"}],"answer":"ABCD"},{"id":395,"type":"多选题","number":75,"question":"无人机地面控制站有多种形式，按不同的使用要求可分为________。","options":[{"key":"A","text":"大型地面站"},{"key":"B","text":"便携式地面站"},{"key":"C","text":"空中中继站"},{"key":"D","text":"掌上微型地面站"}],"answer":"ABD"},{"id":396,"type":"多选题","number":76,"question":"无人机的一般用途包括________。","options":[{"key":"A","text":"用作靶机"},{"key":"B","text":"用作电子对抗"},{"key":"C","text":"用作地址勘查"},{"key":"D","text":"用作侦查"}],"answer":"ABCD"},{"id":397,"type":"多选题","number":77,"question":"无人机的三种操作模式有________。","options":[{"key":"A","text":"手动模式"},{"key":"B","text":"姿态模式"},{"key":"C","text":"AI 模式"},{"key":"D","text":"GPS/北斗模式"}],"answer":"ABD"},{"id":398,"type":"多选题","number":78,"question":"从物质形态来考虑，地球大气的主要成分主要包括________。","options":[{"key":"A","text":"干洁空气"},{"key":"B","text":"水汽"},{"key":"C","text":"二氧化碳"},{"key":"D","text":"大气杂质"}],"answer":"ABD"},{"id":399,"type":"多选题","number":79,"question":"根据《中国低空空域使用管理规定（试行）》，制定本规定的目的以下说法正确的有\n________：","options":[{"key":"A","text":"进一步推动我国低空空域管理改革"},{"key":"B","text":"规范低空空域管理"},{"key":"C","text":"提高空域资源利用率"},{"key":"D","text":"确保低空飞行安全顺畅和高效"}],"answer":"ABCD"},{"id":400,"type":"多选题","number":80,"question":"管制空域原则上只能划设在下列区域________：","options":[{"key":"A","text":"空中禁区和空中危险区；国境地带我方一侧 30 公里范围内；"},{"key":"B","text":"全国重点防空目标区和重点防空目标外围 5 公里区域；"},{"key":"C","text":"终端（进近）管制区；军用和民航运输机场的管制地带；"},{"key":"D","text":"其他需要重点保护地区。"}],"answer":"BCD"},{"id":401,"type":"判断题","number":1,"question":"视距内飞行的定义：高 120 米，半径 300 米。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":402,"type":"判断题","number":2,"question":"空域管理的具体办法由民用航空局制定。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":403,"type":"判断题","number":3,"question":"在一个划定的管制空域内，由军航和民航的各一个空中交通管制单位负责该空域内的航空\n器的空中交通管制。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":404,"type":"判断题","number":4,"question":"关于民用航空器使用禁区的规定是按照国家规定经批准后方可飞入。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":405,"type":"判断题","number":5,"question":"民用航空器的适航管理由国务院和中央军委负责。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":406,"type":"判断题","number":6,"question":"无人机低空飞行为 100m——1000m。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":407,"type":"判断题","number":7,"question":"根据低空空域分类划设原则，山区和高原地区可根据实际需要，经批准后可适当调整高度\n范围。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":408,"type":"判断题","number":8,"question":"监视空域是指为飞行活动提供空中交通管制服务、飞行情报服务、航空气象服务、航空情\n报服务和告警服务的空域。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":409,"type":"判断题","number":9,"question":"空域管理的具体办法由国务院和中央军事委员会制定。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":410,"type":"判断题","number":10,"question":"颁发国内三个层次航空法规的部门是：全国人大常委会、国务院、中央军委、民航总局。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":411,"type":"判断题","number":11,"question":"人口稠密区，是指城镇、村庄、繁忙道路或大型露天集会场所等区域。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":412,"type":"判断题","number":12,"question":"民用航空器只能具有一国国籍。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":413,"type":"判断题","number":13,"question":"民用航空适航管理是对设计、制造、使用和维修进行管理。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":414,"type":"判断题","number":14,"question":"重点地区，是指军事重地、核电站和行政中心等关乎国家安全的区域及周边，或地方政\n府临时划设的区域。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":415,"type":"判断题","number":15,"question":"中华人民共和国境内飞行管制由国务院、中央军委空中交通管制委员会统一组织实施，\n各有关飞行 管制部门按照各自的分工提供空中交通管制服务。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":416,"type":"判断题","number":16,"question":"升力是和相对气流方向一致的。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":417,"type":"判断题","number":17,"question":"诱导阻力的大小与机翼的升力和展弦比有很大的关系。升力越大，诱导阻力越大；展弦\n比越大， 诱导阻力越小。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":418,"type":"判断题","number":18,"question":"物体的运动是各式各样的，平动是一种水平运动或者直线运动。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":419,"type":"判断题","number":19,"question":"飞机的重力着力点，叫做飞机的压心。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":420,"type":"判断题","number":20,"question":"飞机的平衡，是指作用在飞机各力之和为零，各力对重心所构成的各力矩之和也为零。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":421,"type":"判断题","number":21,"question":"一个平飞速度对于着一个迎角。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":422,"type":"判断题","number":22,"question":"对于横侧操纵而言，杆位对应的是坡度。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":423,"type":"判断题","number":23,"question":"对于俯仰操纵而言，杆位对应的是迎角。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":424,"type":"判断题","number":24,"question":"平飞需要拉力同升阻比成正比。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":425,"type":"判断题","number":25,"question":"飞机作圆周运动，需要一个和运动方向相反的力，它不断改变物体运动的方向，而不改\n变物体运 动的线速度。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":426,"type":"判断题","number":26,"question":"适当增加翼型的弯度是提高翼型升力系数和最大升力系数的有效手段，常用的相对弯度\n约为 2%-6%, 尤其 4%比较常见。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":427,"type":"判断题","number":27,"question":"适当前移最大弯度位置也可以提高翼型的最大升力系数，失速形式为前缘失速。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":428,"type":"判断题","number":28,"question":"最大弯度位置靠前，最大升力系数降低，但是可以取得比较缓和的失速特性。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":429,"type":"判断题","number":29,"question":"上反角并不是越大越好，过大的上反角可能引起飞机含有偏航和滚转的重复侧向运动。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":430,"type":"判断题","number":30,"question":"牛顿第一运动定律的定义是，在不受任何外力或所受外力之和为零的状态下，物体总是\n保持匀速 直线运动状态或静止状态。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":431,"type":"判断题","number":31,"question":"牛顿第二定律也称为惯性定律。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":432,"type":"判断题","number":32,"question":"牛顿第一定律并不是在所有的参照系里都成立，实际上它只在惯性参照系里才成立。因\n此常常把 牛顿第一定律是否成立，以一个参照系是否为惯性参照系作为判据。我们日常使\n用的地球坐标系就是一 个惯性参照系。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":433,"type":"判断题","number":33,"question":"第二定律定性地描述了力作用的效果，定量地度量了物体的惯性大小。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":434,"type":"判断题","number":34,"question":"物体之间的相互作用是通过力来体现的。有作用力必有反作用力。它们是作用在同一条\n直线上，大小相等，方向相反。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":435,"type":"判断题","number":35,"question":"关于压力中心的位置要注意三个问题：①压力中心的位置和速度无关；②压力中心的位\n置和翼型 有关；③压力中心的位置通常和迎角有关(对称翼型除外)。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":436,"type":"判断题","number":36,"question":"雷诺数越大，意味着粘性力影响越显著，雷诺数越小，意味着惯性力影响越显著。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":437,"type":"判断题","number":37,"question":"总的来说，摩擦阻力的大小取决于空气的黏性、飞机的表面状况，以及与空气相接触的\n飞机的表面积。空气的黏性越大，飞机的表面越粗糙，飞机的表面积越大，摩擦阻力就越大。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":438,"type":"判断题","number":38,"question":"使用电动机的无人机，动力电池的选择，需要根据飞机的大小购买，忌讳买过大，大容\n量的电池用在小机身，由于电池过重，会影响电机推进的效率，滞留时间反而不长。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":439,"type":"判断题","number":39,"question":"跟升力系数一样，阻力系数是没有单位的系数，其数值是通过实验测定获得的。它们分\n别代表迎 角、机翼形状和飞机表面质量等因素对阻力的综合影响。同一架飞机，在飞行中，\n机翼形状和飞机表面 质量一般是不变的，这时，阻力系数主要由迎角的大小来确定。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":440,"type":"判断题","number":40,"question":"所谓升阻比 (K), 就是在同一迎角下升力与阻力之比。升阻比也就是不同迎角下升力系\n数与阻力系数之比。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":441,"type":"判断题","number":41,"question":"无刷电机电压的输入与电机空载转速遵循严格的线性比例 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":442,"type":"判断题","number":42,"question":"动力电池的主要作用为无人机提供动力驱动 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":443,"type":"判断题","number":43,"question":"飞控系统承担数据采集处理，飞行控制，自动导航，数据链路信息传输等任务 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":444,"type":"判断题","number":44,"question":"无人机任务规划是指根据无人机需要完成的任务、无人机的数量以及携带任务载荷的类\n型，对无 人机制定飞行路线并进行任务分配。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":445,"type":"判断题","number":45,"question":"飞机平飞遇垂直向上突风作用时升力将增大。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":446,"type":"判断题","number":46,"question":"飞机的最大起飞重量指飞机开始起飞滑跑时的重量。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":447,"type":"判断题","number":47,"question":"飞机的横侧安定性过强，而方向安定性相对过弱，飞机容易出现风摆(荷兰滚)。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":448,"type":"判断题","number":48,"question":"飞机的方向安定性过强，而横侧安定性相对过弱，飞机容易出现螺旋不稳定现象。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":449,"type":"判断题","number":49,"question":"飞机的横侧安定性有助于使机翼恢复到水平状态。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":450,"type":"判断题","number":50,"question":"重心靠后，飞机的纵向安定性减弱。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":451,"type":"判断题","number":51,"question":"小型固定翼飞机的主要部件包括机体、起落架和动力装置 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":452,"type":"判断题","number":52,"question":"机翼的主要功能是维持飞行稳定 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":453,"type":"判断题","number":53,"question":"副翼的主要功能是操纵飞机围绕纵轴进行横向活动 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":454,"type":"判断题","number":54,"question":"机翼的主要功能是控制飞机的俯仰和方向平衡，操纵飞机围绕横轴和纵轴进行俯仰和方\n向运动。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":455,"type":"判断题","number":55,"question":"尾翼分为水平尾翼和方向舵 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":456,"type":"判断题","number":56,"question":"小型无人机的起降装置可分为前三点和后三点 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":457,"type":"判断题","number":57,"question":"翼型是机翼的剖面形状 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":458,"type":"判断题","number":58,"question":"水平尾翼包括水平安定面和方向舵 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":459,"type":"判断题","number":59,"question":"翼型前缘的曲率半径称为前缘半径 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":460,"type":"判断题","number":60,"question":"翼型弯度的位置与翼型的升力系数无关 。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":461,"type":"判断题","number":61,"question":"无人机如长期不用，应定期启动，检查设备状态。如有异常现象，应及时调整、维修。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":462,"type":"判断题","number":62,"question":"固定翼模型飞机机翼的平面几何形状有矩形、梯形、椭圆形、三角形以及这些形状的组\n合型等。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":463,"type":"判断题","number":63,"question":"飞行高度层应当根据航向或航路走向、航空器性能、飞行区域以及航线的地形、天气等\n配置。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":464,"type":"判断题","number":64,"question":"飞行的组织与实施包括飞行预先准备、飞行直接准备、飞行实施和飞行讲评四个阶段。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":465,"type":"判断题","number":65,"question":"申请飞行计划通常应当于飞行前一 日 17 时前向空中交通管制部门提出申请，并通知有\n关单位。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":466,"type":"判断题","number":66,"question":"由于无人机飞行过程中无执行任务机长，为了保证飞行安全，由地面站操控人员承担规\n定的机长权利和责任。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":467,"type":"判断题","number":67,"question":"升阻比随迎角的改变而改变。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":468,"type":"判断题","number":68,"question":"划设无人驾驶航空器飞行空域应当遵循统筹配置、安全高效原则，以融合飞行为主，兼\n顾隔离飞行需求，充分考虑飞行安全和公众利益。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":469,"type":"判断题","number":69,"question":"警察、海关、应急管理部门辖有的无人机适航、登记等事项的管理办法，由民航局另行\n制定。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":470,"type":"判断题","number":70,"question":"气团变性的快慢随气团原有的属性而异。 一般冷气团移至温暖地区变性较慢，而暖气团\n移至寒冷地 区，则变性较快。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":471,"type":"判断题","number":71,"question":"一个平衡系统具有安定性的条件是具有安定力矩的作用。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":472,"type":"判断题","number":72,"question":"侧滑是相对气流方向与飞机纵轴不一致的飞行状态。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":473,"type":"判断题","number":73,"question":"精细巡检一般采用固定翼无人机巡检系统进行。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":474,"type":"判断题","number":74,"question":"飞机平飞遇垂直向上突风作用时阻力将增大。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":475,"type":"判断题","number":75,"question":"电调的英文缩写为 ESC。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":476,"type":"判断题","number":76,"question":"对起飞降落安全性造成不利影响的是跑道上的微冲气流。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":477,"type":"判断题","number":77,"question":"无人机驾驶员操纵副翼时，飞行器将绕纵轴运动。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":478,"type":"判断题","number":78,"question":"无人机飞行员操纵升降舵时，飞行器将绕横轴运动。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":479,"type":"判断题","number":79,"question":"无人机飞行员操纵方向舵时，飞行器将绕立轴运动。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":480,"type":"判断题","number":80,"question":"在锋面两侧，气温的差异最大。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":481,"type":"判断题","number":81,"question":"热雷暴形成的原因是地面受热不均。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":482,"type":"判断题","number":82,"question":"若飞行航线.悬停点与杆塔坐标偏差较大，应及时修正航线库。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":483,"type":"判断题","number":83,"question":"航线规划前应根据作业实际需要，向线路所在区域的空管部门履行空域审批手续。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":484,"type":"判断题","number":84,"question":"当环境温度低于-10℃时，宜选择低温放电性能好的电池，−10℃时放电能力不低于 80% 。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":485,"type":"判断题","number":85,"question":"飞行计划申请不包括飞行单位。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":486,"type":"判断题","number":86,"question":"军民航空管部门对处置突发事件.紧急救援等突发性任务飞行，不能优先予以保障。\n（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":487,"type":"判断题","number":87,"question":"对于Ⅲ.Ⅳ.Ⅵ和Ⅶ类无人驾驶航空器，应安装并使用电子围栏。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":488,"type":"判断题","number":88,"question":"无人机如长期不用，需要建档编号后入库保存。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":489,"type":"判断题","number":89,"question":"无论线路负荷变大还是变小，对线路运行都没有影响。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":490,"type":"判断题","number":90,"question":"作业前，无人机应预先设置紧急情况下的安全策略。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":491,"type":"判断题","number":91,"question":"气体的密度与温度成反比。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":492,"type":"判断题","number":92,"question":"空气的密度与压力成正比。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":493,"type":"判断题","number":93,"question":"流体的伯努利定律适用于不可压缩的粘性流体。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":494,"type":"判断题","number":94,"question":"当无人驾驶航空器的迎角为临界迎角时航程最远。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":495,"type":"判断题","number":95,"question":"国际标准大气压值是 100kPa。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":496,"type":"判断题","number":96,"question":"任务载荷分系统由任务设备和地面显控单元组成。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":497,"type":"判断题","number":97,"question":"使飞机绕横轴产生侧倾的力矩称为俯仰力矩。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":498,"type":"判断题","number":98,"question":"使飞机绕立轴产生侧倾的力矩称为转向力矩。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"B"},{"id":499,"type":"判断题","number":99,"question":"在滑翔状态下，较大的下滑角会导致形成一个较大的重力分量。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"},{"id":500,"type":"判断题","number":100,"question":"地面操作人员对无人驾驶航空器飞行状态以及飞行航迹的操作和规划信息，可以通过地\n面控制站传输到数传电台进而发射给无人驾驶航空器。（ ）","options":[{"key":"A","text":"对"},{"key":"B","text":"错"}],"answer":"A"}]</script>
+  <script>
+    const QUESTIONS = JSON.parse(document.getElementById('question-data').textContent);
+    const STORE_KEY = 'uav-theory-quiz-2026-v1';
+    const filters = {
+      all: () => true,
+      single: q => q.type === '单选题',
+      multiple: q => q.type === '多选题',
+      judge: q => q.type === '判断题',
+      wrong: q => Boolean(records[q.id] && records[q.id].attempts > 0 && !records[q.id].lastCorrect),
+      favorite: q => Boolean(favorites[q.id])
+    };
+
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch (error) { saved = {}; }
+
+    let records = saved.records || {};
+    let favorites = saved.favorites || {};
+    let autoAdvanceTimer = null;
+    const TEST_ADVANCE_DELAY = 260;
+    let state = {
+      mode: saved.mode === 'test' ? 'test' : 'practice',
+      filter: 'all',
+      order: 'sequential',
+      search: '',
+      currentId: QUESTIONS[0].id,
+      drafts: {},
+      revealed: {},
+      testSubmitted: false,
+      testSummary: null,
+      randomIds: shuffle(QUESTIONS.map(q => q.id))
+    };
+
+    const els = {
+      statTotal: document.getElementById('statTotal'),
+      statDone: document.getElementById('statDone'),
+      statAccuracy: document.getElementById('statAccuracy'),
+      statWrong: document.getElementById('statWrong'),
+      statTotalLabel: document.getElementById('statTotalLabel'),
+      statDoneLabel: document.getElementById('statDoneLabel'),
+      statAccuracyLabel: document.getElementById('statAccuracyLabel'),
+      statWrongLabel: document.getElementById('statWrongLabel'),
+      modeSwitch: document.getElementById('modeSwitch'),
+      scopeCount: document.getElementById('scopeCount'),
+      filterTabs: document.getElementById('filterTabs'),
+      orderSelect: document.getElementById('orderSelect'),
+      searchInput: document.getElementById('searchInput'),
+      shuffleBtn: document.getElementById('shuffleBtn'),
+      exportWrongBtn: document.getElementById('exportWrongBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      navGrid: document.getElementById('navGrid'),
+      listCount: document.getElementById('listCount'),
+      badges: document.getElementById('badges'),
+      favoriteBtn: document.getElementById('favoriteBtn'),
+      questionText: document.getElementById('questionText'),
+      optionList: document.getElementById('optionList'),
+      resultBox: document.getElementById('resultBox'),
+      progressFill: document.getElementById('progressFill'),
+      prevBtn: document.getElementById('prevBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      revealBtn: document.getElementById('revealBtn'),
+      submitBtn: document.getElementById('submitBtn')
+    };
+
+    function shuffle(items) {
+      const copy = items.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function persist() {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ records, favorites, mode: state.mode }));
+    }
+
+    function answerOf(keys) {
+      return keys.slice().sort().join('');
+    }
+
+    function typeShort(q) {
+      if (q.type === '单选题') return '单选';
+      if (q.type === '多选题') return '多选';
+      return '判断';
+    }
+
+    function getQuestion(id) {
+      return QUESTIONS.find(q => q.id === id) || QUESTIONS[0];
+    }
+
+    function questionSearchText(q) {
+      return [q.question, ...q.options.map(o => o.key + '.' + o.text)].join('\n').toLowerCase();
+    }
+
+    function filteredList() {
+      const search = state.search.trim().toLowerCase();
+      let list = QUESTIONS.filter(q => filters[state.filter](q));
+      if (search) list = list.filter(q => questionSearchText(q).includes(search));
+
+      if (state.order === 'random') {
+        const rank = new Map(state.randomIds.map((id, index) => [id, index]));
+        list = list.slice().sort((a, b) => rank.get(a.id) - rank.get(b.id));
+      } else if (state.order === 'unanswered') {
+        list = list.slice().sort((a, b) => {
+          const aDone = records[a.id] && records[a.id].attempts > 0 ? 1 : 0;
+          const bDone = records[b.id] && records[b.id].attempts > 0 ? 1 : 0;
+          return aDone - bDone || a.id - b.id;
+        });
+      } else {
+        list = list.slice().sort((a, b) => a.id - b.id);
+      }
+      return list;
+    }
+
+    function ensureCurrent(list) {
+      if (!list.length) {
+        state.currentId = null;
+        return;
+      }
+      if (!list.some(q => q.id === state.currentId)) {
+        state.currentId = list[0].id;
+      }
+    }
+
+    function currentIndex(list) {
+      return list.findIndex(q => q.id === state.currentId);
+    }
+
+    function renderStats(list) {
+      if (state.mode === 'test') {
+        const total = list.length;
+        const answered = list.filter(q => (state.drafts[q.id] || []).length > 0).length;
+        const summary = state.testSummary;
+        els.statTotal.textContent = total;
+        els.statDone.textContent = summary ? summary.answered : answered;
+        els.statAccuracy.textContent = summary ? summary.accuracy + '%' : '待交卷';
+        els.statWrong.textContent = summary ? summary.wrong : total - answered;
+        els.statTotalLabel.textContent = '测试题';
+        els.statDoneLabel.textContent = '已答';
+        els.statAccuracyLabel.textContent = '正确率';
+        els.statWrongLabel.textContent = summary ? '错误' : '未答';
+        return;
+      }
+      const total = QUESTIONS.length;
+      const attempted = QUESTIONS.filter(q => records[q.id] && records[q.id].attempts > 0).length;
+      const correct = QUESTIONS.filter(q => records[q.id] && records[q.id].attempts > 0 && records[q.id].lastCorrect).length;
+      const wrong = QUESTIONS.filter(q => records[q.id] && records[q.id].attempts > 0 && !records[q.id].lastCorrect).length;
+      els.statTotal.textContent = total;
+      els.statDone.textContent = attempted;
+      els.statAccuracy.textContent = attempted ? Math.round(correct / attempted * 100) + '%' : '0%';
+      els.statWrong.textContent = wrong;
+      els.statTotalLabel.textContent = '题目';
+      els.statDoneLabel.textContent = '已练';
+      els.statAccuracyLabel.textContent = '正确率';
+      els.statWrongLabel.textContent = '错题';
+    }
+
+    function renderMode() {
+      [...els.modeSwitch.querySelectorAll('button')].forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === state.mode);
+      });
+    }
+
+    function renderFilters(list) {
+      [...els.filterTabs.querySelectorAll('button')].forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === state.filter);
+      });
+      els.scopeCount.textContent = list.length + ' 题';
+    }
+
+    function renderNav(list) {
+      const index = currentIndex(list);
+      els.listCount.textContent = list.length ? (index + 1) + '/' + list.length : '0/0';
+      els.navGrid.innerHTML = '';
+      if (!list.length) {
+        const empty = document.createElement('p');
+        empty.className = 'empty-list';
+        empty.textContent = '没有匹配的题目';
+        els.navGrid.appendChild(empty);
+        return;
+      }
+      const frag = document.createDocumentFragment();
+      list.forEach((q, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.textContent = q.id;
+        btn.title = typeShort(q) + '第 ' + q.number + ' 题';
+        if (q.id === state.currentId) btn.classList.add('current');
+        if (favorites[q.id]) btn.classList.add('favorite');
+        const record = records[q.id];
+        const answeredInTest = (state.drafts[q.id] || []).length > 0;
+        if (state.mode === 'test') {
+          if (!state.testSubmitted) {
+            if (answeredInTest) btn.classList.add('answered');
+          } else if (state.revealed[q.id]) {
+            btn.classList.add(state.revealed[q.id].correct ? 'correct' : 'wrong');
+          }
+        } else if (record && record.attempts > 0) {
+          btn.classList.add(record.lastCorrect ? 'correct' : 'wrong');
+        }
+        btn.addEventListener('click', () => {
+          cancelAutoAdvance();
+          state.currentId = q.id;
+          render();
+        });
+        frag.appendChild(btn);
+      });
+      els.navGrid.appendChild(frag);
+    }
+
+    function renderQuestion(q, list) {
+      if (!q) {
+        els.badges.innerHTML = '';
+        els.favoriteBtn.disabled = true;
+        els.questionText.textContent = '没有匹配的题目';
+        els.optionList.innerHTML = '';
+        els.resultBox.className = 'result';
+        els.resultBox.textContent = '';
+        els.progressFill.style.width = '0%';
+        els.prevBtn.disabled = true;
+        els.nextBtn.disabled = true;
+        els.revealBtn.disabled = true;
+        els.submitBtn.disabled = true;
+        return;
+      }
+
+      const index = currentIndex(list);
+      const record = records[q.id];
+      const reveal = state.revealed[q.id];
+      const selected = state.drafts[q.id] || [];
+      const progress = list.length ? ((index + 1) / list.length * 100) : 0;
+      const answeredInTest = selected.length > 0;
+
+      els.badges.innerHTML = '';
+      [
+        { text: typeShort(q) + '第 ' + q.number + ' 题', cls: 'type' },
+        { text: '总第 ' + q.id + ' 题', cls: '' },
+        { text: state.mode === 'test' ? '测试模式' : '练习模式', cls: '' },
+        state.mode === 'test' && !state.testSubmitted ? { text: answeredInTest ? '已答' : '未答', cls: answeredInTest ? 'done' : '' } : null,
+        state.mode === 'test' && state.testSubmitted && reveal ? { text: reveal.correct ? '本题正确' : '本题错误', cls: reveal.correct ? 'done' : 'wrong' } : null,
+        state.mode === 'practice' && record && record.attempts > 0 ? { text: record.lastCorrect ? '上次正确' : '上次错误', cls: record.lastCorrect ? 'done' : 'wrong' } : null,
+        state.mode === 'practice' && record && record.attempts > 0 ? { text: '练过 ' + record.attempts + ' 次', cls: '' } : null
+      ].filter(Boolean).forEach(item => {
+        const span = document.createElement('span');
+        span.className = 'badge ' + item.cls;
+        span.textContent = item.text;
+        els.badges.appendChild(span);
+      });
+
+      els.favoriteBtn.disabled = false;
+      els.favoriteBtn.classList.toggle('active', Boolean(favorites[q.id]));
+      els.favoriteBtn.textContent = favorites[q.id] ? '已收藏' : '收藏';
+      els.questionText.textContent = q.question;
+      els.optionList.innerHTML = '';
+
+      const correctKeys = q.answer.split('');
+      q.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.type = 'button';
+        const chosen = selected.includes(option.key);
+        if (chosen) btn.classList.add('selected');
+        if (reveal) {
+          const isCorrect = correctKeys.includes(option.key);
+          if (isCorrect) btn.classList.add('correct');
+          if (chosen && !isCorrect) btn.classList.add('wrong');
+        }
+        btn.innerHTML = '<span class="option-key"></span><span class="option-text"></span>';
+        btn.querySelector('.option-key').textContent = option.key;
+        btn.querySelector('.option-text').textContent = option.text;
+        btn.addEventListener('click', () => toggleOption(q, option.key));
+        els.optionList.appendChild(btn);
+      });
+
+      renderResult(q, reveal);
+      els.progressFill.style.width = progress + '%';
+      els.prevBtn.disabled = index <= 0;
+      els.nextBtn.disabled = index < 0 || index >= list.length - 1;
+      els.revealBtn.style.display = state.mode === 'test' ? 'none' : '';
+      els.revealBtn.disabled = state.mode === 'test';
+      els.submitBtn.textContent = state.mode === 'test' ? (state.testSubmitted ? '重新测试' : '交卷') : '判题';
+      els.submitBtn.disabled = false;
+    }
+
+    function renderResult(q, reveal) {
+      els.resultBox.className = 'result';
+      els.resultBox.textContent = '';
+      if (state.mode === 'test') {
+        if (!state.testSummary) return;
+        const summary = state.testSummary;
+        els.resultBox.classList.add('show');
+        els.resultBox.classList.add(summary.accuracy >= 80 ? 'good' : summary.accuracy >= 60 ? 'neutral' : 'bad');
+        els.resultBox.textContent = '本次测试：已答 ' + summary.answered + '/' + summary.total + '，正确 ' + summary.correct + '，错误 ' + summary.wrong + '，正确率 ' + summary.accuracy + '%。';
+        return;
+      }
+      if (!reveal) return;
+      els.resultBox.classList.add('show');
+      if (reveal.kind === 'answer') {
+        els.resultBox.classList.add('neutral');
+        els.resultBox.textContent = '参考答案：' + q.answer;
+        return;
+      }
+      if (reveal.correct) {
+        els.resultBox.classList.add('good');
+        els.resultBox.textContent = '答对了。答案：' + q.answer;
+      } else {
+        els.resultBox.classList.add('bad');
+        els.resultBox.textContent = '答错了。正确答案：' + q.answer + '；你的答案：' + (reveal.answer || '未选择');
+      }
+    }
+
+    function render() {
+      const list = filteredList();
+      ensureCurrent(list);
+      const q = state.currentId ? getQuestion(state.currentId) : null;
+      renderStats(list);
+      renderMode();
+      renderFilters(list);
+      renderNav(list);
+      renderQuestion(q, list);
+    }
+
+    function cancelAutoAdvance() {
+      if (!autoAdvanceTimer) return;
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = null;
+    }
+
+    function nextQuestionAfter(questionId) {
+      const list = filteredList();
+      const index = list.findIndex(q => q.id === questionId);
+      return index >= 0 ? list[index + 1] : null;
+    }
+
+    function scheduleAutoAdvance(fromId, toId) {
+      cancelAutoAdvance();
+      if (!toId) return;
+      autoAdvanceTimer = setTimeout(() => {
+        autoAdvanceTimer = null;
+        if (state.currentId !== fromId) return;
+        state.currentId = toId;
+        render();
+      }, TEST_ADVANCE_DELAY);
+    }
+
+    function recordAnswer(q, answer, correct) {
+      const prior = records[q.id] || { attempts: 0, correct: 0, wrong: 0 };
+      records[q.id] = {
+        attempts: prior.attempts + 1,
+        correct: prior.correct + (correct ? 1 : 0),
+        wrong: prior.wrong + (correct ? 0 : 1),
+        lastAnswer: answer,
+        lastCorrect: correct,
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function gradePracticeAnswer(q, selected) {
+      const answer = answerOf(selected);
+      const priorReveal = state.revealed[q.id];
+      if (priorReveal && priorReveal.kind === 'submit' && priorReveal.answer === answer) return;
+      const correct = answer === q.answer;
+      recordAnswer(q, answer, correct);
+      state.revealed[q.id] = { kind: 'submit', answer, correct };
+      persist();
+    }
+
+    function resetTestSession() {
+      cancelAutoAdvance();
+      state.drafts = {};
+      state.revealed = {};
+      state.testSubmitted = false;
+      state.testSummary = null;
+      const list = filteredList();
+      state.currentId = list.length ? list[0].id : null;
+      persist();
+      render();
+    }
+
+    function submitTest() {
+      cancelAutoAdvance();
+      const list = filteredList();
+      let answered = 0;
+      let correctCount = 0;
+      state.revealed = {};
+
+      list.forEach(q => {
+        const selected = state.drafts[q.id] || [];
+        if (!selected.length) return;
+        const answer = answerOf(selected);
+        const correct = answer === q.answer;
+        answered += 1;
+        correctCount += correct ? 1 : 0;
+        recordAnswer(q, answer, correct);
+        state.revealed[q.id] = { kind: 'submit', answer, correct };
+      });
+
+      state.testSubmitted = true;
+      state.testSummary = {
+        total: list.length,
+        answered,
+        correct: correctCount,
+        wrong: answered - correctCount,
+        accuracy: answered ? Math.round(correctCount / answered * 100) : 0
+      };
+      persist();
+      render();
+    }
+
+    function toggleOption(q, key) {
+      cancelAutoAdvance();
+      if (state.mode === 'test' && state.testSubmitted) return;
+      if (state.mode === 'practice' && state.revealed[q.id]) {
+        delete state.revealed[q.id];
+      }
+      const selected = new Set(state.drafts[q.id] || []);
+      const multi = q.type === '多选题' || q.answer.length > 1;
+      if (multi) {
+        selected.has(key) ? selected.delete(key) : selected.add(key);
+        state.drafts[q.id] = [...selected].sort();
+      } else {
+        state.drafts[q.id] = [key];
+      }
+
+      const currentSelected = state.drafts[q.id] || [];
+      if (state.mode === 'practice') {
+        if (!multi || currentSelected.length >= q.answer.length) {
+          gradePracticeAnswer(q, currentSelected);
+        }
+        render();
+        return;
+      }
+
+      render();
+      if (!multi) {
+        const nextQuestion = nextQuestionAfter(q.id);
+        scheduleAutoAdvance(q.id, nextQuestion && nextQuestion.id);
+      }
+    }
+
+    function submitCurrent() {
+      if (!state.currentId) return;
+      if (state.mode === 'test') {
+        state.testSubmitted ? resetTestSession() : submitTest();
+        return;
+      }
+      const q = getQuestion(state.currentId);
+      const selected = state.drafts[q.id] || [];
+      if (!selected.length) {
+        cancelAutoAdvance();
+        state.revealed[q.id] = { kind: 'submit', answer: '', correct: false };
+        render();
+        return;
+      }
+      gradePracticeAnswer(q, selected);
+      render();
+    }
+
+    function revealCurrent() {
+      if (!state.currentId) return;
+      if (state.mode === 'test') return;
+      cancelAutoAdvance();
+      const q = getQuestion(state.currentId);
+      state.revealed[q.id] = { kind: 'answer' };
+      render();
+    }
+
+    function move(delta) {
+      cancelAutoAdvance();
+      const list = filteredList();
+      const index = currentIndex(list);
+      const next = list[index + delta];
+      if (next) {
+        state.currentId = next.id;
+        render();
+      }
+    }
+
+    function setMode(mode) {
+      if (state.mode === mode) return;
+      cancelAutoAdvance();
+      state.mode = mode;
+      state.drafts = {};
+      state.revealed = {};
+      state.testSubmitted = false;
+      state.testSummary = null;
+      const list = filteredList();
+      state.currentId = list.length ? list[0].id : null;
+      persist();
+      render();
+    }
+
+    function exportWrong() {
+      const wrong = QUESTIONS.filter(q => records[q.id] && records[q.id].attempts > 0 && !records[q.id].lastCorrect);
+      if (!wrong.length) return;
+      const text = wrong.map(q => {
+        const opts = q.options.map(o => o.key + '. ' + o.text).join('\n');
+        const last = records[q.id] && records[q.id].lastAnswer ? records[q.id].lastAnswer : '未记录';
+        return '[' + typeShort(q) + ' ' + q.number + ' / 总第 ' + q.id + ' 题]\n' + q.question + '\n' + opts + '\n答案：' + q.answer + '\n上次选择：' + last;
+      }).join('\n\n');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '无人机驾驶员理论错题.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    els.modeSwitch.addEventListener('click', event => {
+      const btn = event.target.closest('button[data-mode]');
+      if (!btn) return;
+      setMode(btn.dataset.mode);
+    });
+
+    els.filterTabs.addEventListener('click', event => {
+      const btn = event.target.closest('button[data-filter]');
+      if (!btn) return;
+      cancelAutoAdvance();
+      state.testSubmitted = false;
+      state.testSummary = null;
+      state.revealed = {};
+      state.filter = btn.dataset.filter;
+      render();
+    });
+
+    els.orderSelect.addEventListener('change', event => {
+      cancelAutoAdvance();
+      state.testSubmitted = false;
+      state.testSummary = null;
+      state.revealed = {};
+      state.order = event.target.value;
+      if (state.order === 'random') state.randomIds = shuffle(QUESTIONS.map(q => q.id));
+      render();
+    });
+
+    els.searchInput.addEventListener('input', event => {
+      cancelAutoAdvance();
+      state.testSubmitted = false;
+      state.testSummary = null;
+      state.revealed = {};
+      state.search = event.target.value;
+      render();
+    });
+
+    els.shuffleBtn.addEventListener('click', () => {
+      cancelAutoAdvance();
+      state.testSubmitted = false;
+      state.testSummary = null;
+      state.revealed = {};
+      state.order = 'random';
+      els.orderSelect.value = 'random';
+      state.randomIds = shuffle(QUESTIONS.map(q => q.id));
+      render();
+    });
+
+    els.exportWrongBtn.addEventListener('click', exportWrong);
+
+    els.resetBtn.addEventListener('click', () => {
+      if (!confirm('清空所有练习记录？')) return;
+      cancelAutoAdvance();
+      records = {};
+      favorites = {};
+      state.drafts = {};
+      state.revealed = {};
+      state.testSubmitted = false;
+      state.testSummary = null;
+      persist();
+      render();
+    });
+
+    els.favoriteBtn.addEventListener('click', () => {
+      if (!state.currentId) return;
+      if (favorites[state.currentId]) delete favorites[state.currentId];
+      else favorites[state.currentId] = true;
+      persist();
+      render();
+    });
+
+    els.prevBtn.addEventListener('click', () => move(-1));
+    els.nextBtn.addEventListener('click', () => move(1));
+    els.revealBtn.addEventListener('click', revealCurrent);
+    els.submitBtn.addEventListener('click', submitCurrent);
+
+    document.addEventListener('keydown', event => {
+      if (event.target.matches('input, select, textarea')) return;
+      if (event.key === 'ArrowLeft') move(-1);
+      if (event.key === 'ArrowRight') move(1);
+      if (event.key === 'Enter') submitCurrent();
+      const q = state.currentId ? getQuestion(state.currentId) : null;
+      if (!q) return;
+      const key = event.key.toUpperCase();
+      if (/^[A-F]$/.test(key) && q.options.some(o => o.key === key)) toggleOption(q, key);
+    });
+
+    render();
+  </script>
+</body>
+</html>
